@@ -1,0 +1,31 @@
+# OS 임시 파일
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 에디터 및 임시 파일
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# 환경 변수와 인증 정보
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+.ssh/
+.aws/
+.codex/
+.agents/
+credentials.json
+secrets.json

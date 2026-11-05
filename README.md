@@ -29,7 +29,7 @@ mission-1-1/
     └── index.html
 ```
 
-`evidence/`에는 PNG 증빙 이미지 19개가 있으며, 아래 관련 실습 절에서 각각 한 번씩 참조합니다. 이미지를 직접 확인하여 배치했으며, 재현 안내 명령어와 당시 실행 화면의 이름·입력값이 다른 경우 캡션으로 구분합니다.
+`evidence/`에는 PNG 증빙 이미지 21개가 있으며, 아래 관련 실습 절에서 각각 한 번씩 참조합니다. 이미지를 직접 확인하여 배치했으며, 재현 안내 명령어와 당시 실행 화면의 이름·입력값이 다른 경우 캡션으로 구분합니다.
 
 ## 1. Linux 명령어와 경로
 
@@ -319,9 +319,19 @@ git push -u origin main
 
 GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 않습니다. VS Code의 GitHub 인증 흐름 등을 사용하고 GitHub 저장소에서 README와 증거가 표시되는지 확인합니다.
 
-**제출 Repository URL:** 실제 URL 추가 필요.
+**제출 Repository URL:** [https://github.com/inyoung7-lab/ia-codyssey-allinone-test1-1](https://github.com/inyoung7-lab/ia-codyssey-allinone-test1-1)
 
-**추가 증빙 필요:** VS Code와 GitHub 인증·원격 저장소 연동을 확인할 이미지는 현재 19개에 포함되어 있지 않습니다.
+**Git 실습 증빙**
+
+첫 커밋 성공 화면에서 `main` 브랜치의 루트 커밋 `10e3f6a`와 파일 등록 결과를 확인할 수 있습니다.
+
+![첫 Git 커밋 10e3f6a 성공](evidence/git-first-commit-success.png)
+
+병합·업로드 화면에서 병합 커밋 `e4361d0`, `git push -u origin main`의 `main -> main` 성공 출력, `origin/main` 추적 설정 및 병합 이력을 확인할 수 있습니다. 이 화면은 당시 업로드의 증거이며, 이번에 추가한 이미지와 README 수정분의 업로드를 증명하지는 않습니다.
+
+![병합 커밋 e4361d0 및 GitHub main push 성공](evidence/git-merge-and-push-confirmed.png)
+
+**추가 증빙 필요:** GitHub 브라우저에서 저장소 파일 목록과 README가 표시되는 화면은 아직 포함되어 있지 않습니다.
 
 ## 9. 실제 출력과 제출 전 확인
 
@@ -342,7 +352,7 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 - [ ] 이미지 빌드·포트 매핑·주소창 포함 브라우저 증거 추가
 - [ ] Bind Mount 변경 전후 및 Named Volume 영속성 결과 추가
 - [ ] 실제 오류 2건의 원문·해결 과정·해결 후 결과 추가
-- [x] `evidence/`의 PNG 19개를 관련 절에 중복 없이 연결하고 상대경로 확인
+- [x] `evidence/`의 PNG 21개를 관련 절에 중복 없이 연결하고 상대경로 확인
 - [ ] 명령어를 실행 환경에서 따라 하며 재현성 확인
 - [ ] Git 사용자 설정·main 브랜치·VS Code 및 GitHub 연동 확인
 - [ ] 스크린샷과 커밋 대상에 비밀번호·토큰·개인키·비공개 개인정보가 없는지 확인

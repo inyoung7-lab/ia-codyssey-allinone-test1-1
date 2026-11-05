@@ -29,3 +29,9 @@ id_ed25519*
 .agents/
 credentials.json
 secrets.json
+
+# Windows 다운로드 메타데이터 (PNG 본체는 유지)
+*:Zone.Identifier
+
+# 개인정보가 포함된 증빙 원본: 공개 금지
+/private-evidence-backup/

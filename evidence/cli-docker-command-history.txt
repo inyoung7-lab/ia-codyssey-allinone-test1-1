@@ -1,0 +1,27 @@
+  134  rm -i practice-renamed.txt
+  135  ls -l
+  136  stat -c '%a %A %n' practice-empty.txt
+  137  chmod 600 practice-empty.txt
+  138  stat -c '%a %A %n' practice-empty.txt
+  139  chmod 644 practice-empty.txt
+  140  stat -c '%a %A %n' practice-empty.txt
+  141  stat -c '%a %A %n' .
+  142  chmod 700 .
+  143  stat -c '%a %A %n' .
+  144  chmod 755 . && stat -c '%a %A %n' .
+  145  docker volume create codyssey-final-volume-check
+  146  docker run --name codyssey-final-volume-before -v codyssey-final-volume-check:/data ubuntu:24.04 bash -c 'echo "Codyssey volume persistence verified" > /data/check.txt; cat /data/check.txt'
+  147  docker rm codyssey-final-volume-before
+  148  docker run --rm --name codyssey-final-volume-after -v codyssey-final-volume-check:/data ubuntu:24.04 cat /data/check.txt
+  149  cd ..
+  150  cat web-server/Dockerfile
+  151  mkdir -p dockerfile-manual-practice
+  152  nano dockerfile-manual-practice/Dockerfile
+  153  cp web-server/index.html dockerfile-manual-practice/index.html
+  154  docker build -t codyssey-web:manual-check ./dockerfile-manual-practice
+  155  docker run -d --name codyssey-web-manual-check -p 127.0.0.1:8081:80 codyssey-web:manual-check
+  156  curl -i http://localhost:8081
+  157  git status --short
+  158  find cli-evidence-practice dockerfile-manual-practice -maxdepth 2 -type f -printf '%p (%s bytes)\n'
+  159  find evidence -maxdepth 1 -type f -printf '%f\n' | sort
+  160  history | tail -n 30

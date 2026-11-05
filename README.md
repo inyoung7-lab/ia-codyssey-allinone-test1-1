@@ -8,8 +8,33 @@
 - 작업 경로: `/path/to/mission-1-1`
 - 기본 브랜치: `main` (사용자 제공 정보)
 - Docker Desktop에서 WSL2 엔진과 해당 Ubuntu 배포판의 WSL 통합이 활성화되어 있어야 합니다.
-- 아래 실행 명령어는 **재현 안내**이며, 문서 작성 과정에서 Docker 및 Git 명령어를 실행하지 않았습니다. 명령어 블록은 실제 실행 로그가 아닙니다.
-- 사용자가 수행했다고 알려준 실습과 파일로 확인한 사실을 구분합니다. Docker 버전 전체와 GitHub 연동은 추가 검증이 필요하며, 현재 연결된 스크린샷의 확인 범위는 각 절에 표시합니다.
+- 명령어는 **재현 안내**, **셸 history 발췌**, **이번 파일 조회 결과**로 구분합니다. 재현 안내는 실행 증거가 아니며, history에는 성공 여부를 판단할 출력이 없습니다. 이번 문서 정리에서 Docker 실행·중지·삭제 및 Git add·commit·push는 수행하지 않았습니다.
+- 실제 출력·파일로 확인한 사실과 사용자 보고·명령 이력을 구분합니다. 각 이미지의 확인 범위를 캡션에 표시하며, 개인정보 마스킹과 최종 GitHub 반영 점검은 남아 있습니다.
+
+### 공식 기준 및 추가 실습 자료
+
+공식 기준은 [사용자 제공 미션 원문](mission-requirements.md)의 2·4·7절이며, 5절 보너스는 필수와 구분합니다.
+
+- [추가 명령어 이력](evidence/cli-docker-command-history.txt): history 134~160번. 명령 입력 기록이며 실행 출력은 포함하지 않습니다.
+- [CLI 실습 파일](cli-evidence-practice/practice-empty.txt): 현재 28바이트입니다. 이름과 달리 현재 빈 파일은 아니며, 과거 `touch` 수행 여부는 별도 로그로 확인해야 합니다.
+- [직접 작성 실습 Dockerfile](dockerfile-manual-practice/Dockerfile), [정적 HTML](dockerfile-manual-practice/index.html)
+
+환경 증빙의 실제 출력에서 WSL 호스트 Ubuntu 26.04.1 LTS, Bash(`/bin/bash`), Docker CLI·서버 29.9.2, Git 2.53.0을 확인했습니다. 기존 Ubuntu 24.04 컨테이너와 호스트 OS 버전은 서로 다른 환경입니다. 터미널은 VS Code 통합 터미널 사용 화면이 있습니다.
+
+![OS·Shell·Docker CLI 및 서버·Git 버전 실제 출력](<evidence/environment-docker-check-masked.png>)
+
+### 개인 경로를 바꾸어 재현하는 방법
+
+아래 기존 절의 `/path/to/mission-1-1`은 작성자 작업 경로입니다. 평가자는 저장소를 clone한 실제 위치를 사용하고 그 경로를 모든 `cd` 명령에 일관되게 대체합니다. Docker Desktop의 해당 WSL 배포판 통합을 켜고 WSL 터미널에서 실행합니다. 같은 이름의 컨테이너·파일이나 점유된 포트가 있으면 새 이름·빈 포트를 사용하며, 기존 자원을 임의 삭제하지 않습니다.
+
+```bash
+# 재현 안내: 원하는 상위 폴더에서 저장소가 아직 없을 때
+git clone https://github.com/inyoung7-lab/ia-codyssey-allinone-test1-1.git
+cd ia-codyssey-allinone-test1-1
+pwd
+```
+
+후속 상대경로는 이 프로젝트 루트를 기준으로 합니다.
 
 ## 프로젝트 구성
 
@@ -29,11 +54,11 @@ mission-1-1/
     └── index.html
 ```
 
-`evidence/`에는 PNG 증빙 이미지 21개가 있으며, 아래 관련 실습 절에서 각각 한 번씩 참조합니다. 이미지를 직접 확인하여 배치했으며, 재현 안내 명령어와 당시 실행 화면의 이름·입력값이 다른 경우 캡션으로 구분합니다.
+`evidence/`의 PNG 증빙은 아래 관련 실습 절에서 각각 한 번씩 참조합니다. 최종 개수는 하단 체크리스트에 기록합니다. 이미지를 직접 확인하여 배치했으며, 재현 안내 명령어와 당시 실행 화면의 이름·입력값이 다른 경우 캡션으로 구분합니다.
 
 ## 1. Linux 명령어와 경로
 
-사용자는 `pwd`, `ls`, `ls -la`, `cd`, `mkdir`, `touch`, `echo`, `cat`, `cp`, `mv`를 실습했다고 보고했습니다. 파일의 존재는 확인했지만 각 명령어의 실행 이력은 별도 증거가 필요합니다.
+사용자는 기본 CLI 실습을 수행했습니다. 아래에서 실제 결과가 있는 조회 화면과 명령 이력만 있는 생성·복사·이동 기록을 구분합니다.
 
 다음 명령어는 기존 파일과 구분한 `cli-replay/`에서 한 번씩 수행하는 재현 예시입니다. 같은 폴더가 이미 있다면 먼저 내용을 확인하고 다른 이름을 사용합니다.
 
@@ -59,6 +84,24 @@ cd ..
 **증빙:** VS Code 터미널의 출력 확인 화면입니다. CLI 전체 명령어 수행 이력을 증명하는 화면은 아닙니다.
 
 ![VS Code 터미널에서 TERMINAL_TEST_OK 출력 확인](evidence/terminal-output-restored.png)
+
+### 추가 CLI 수행 기록의 확인 범위
+
+`cli-evidence-practice/`에서의 명령 이력과 새 조회 결과를 연결했습니다. 새 화면은 `cd`, `pwd`, `ls -la`, `cat`의 입력과 출력, 실제 파일 내용을 보여줍니다. 생성·빈 파일·복사·이동의 당시 결과는 history만으로 확정하지 않습니다. 삭제 확인 질문 화면도 실제 삭제 완료 응답은 포함하지 않습니다.
+
+```bash
+# history 발췌: 원본 번호 134~135, 출력 없음
+rm -i practice-renamed.txt
+ls -l
+```
+
+삭제 확인 질문에 대한 응답과 삭제 후 목록은 이력에 없습니다. 파일 존재만으로 복사·이동·삭제 성공을 확정하지 않습니다.
+
+![프로젝트 위치·숨김 파일 포함 목록·파일 내용의 실제 출력](<evidence/linux-cli-execution-results.png>)
+
+![CLI 생성·복사·이동 명령 이력: 성공 출력과 구분](<evidence/linux-cli-command-history.png>)
+
+![rm -i 삭제 확인 질문: 삭제 완료 증거는 아님](<evidence/codyssey-permissions-evidence/cli-remove-confirmation-prompt.png>)
 
 ## 2. 파일·디렉터리 권한
 
@@ -93,6 +136,44 @@ ls -ld cli-replay
 
 ![permission-test 디렉터리의 rwxr-xr-x 권한 확인](evidence/linux-directory-permission-755-confirmed.png)
 
+### 추가 파일·디렉터리 권한 실습
+
+```bash
+# history 발췌: 원본 번호 136~144, 출력 없음
+stat -c '%a %A %n' practice-empty.txt
+chmod 600 practice-empty.txt
+stat -c '%a %A %n' practice-empty.txt
+chmod 644 practice-empty.txt
+stat -c '%a %A %n' practice-empty.txt
+stat -c '%a %A %n' .
+chmod 700 .
+stat -c '%a %A %n' .
+chmod 755 . && stat -c '%a %A %n' .
+```
+
+사용자 보고와 파일 배치를 기준으로 작업 대상은 `cli-evidence-practice/`로 연결됩니다. history 자체에는 진입 명령과 조회 출력이 없습니다. `600`은 소유자 읽기·쓰기만, `700`은 소유자 읽기·쓰기·실행만 허용합니다.
+
+이번 문서 정리에서 `stat -c '%a %A %s %n'`으로 읽기 전용 조회한 결과:
+
+```text
+755 drwxr-xr-x 4096 cli-evidence-practice
+644 -rw-r--r-- 28 cli-evidence-practice/practice-empty.txt
+```
+
+파일의 `644→600→644` 상태를 기존 이미지와 아래 실제 출력으로 확인했습니다. 별도 `permission-demo` 디렉터리의 `755→700→755`는 새 화면에 각 명령과 결과가 함께 있어 검증을 완료했습니다. 기존 `directory-permission-755-stat.png`는 실습 폴더 자체의 755 상태이며 새 디렉터리와 대상을 구분합니다.
+
+![파일 644 목록 출력: 소유자·그룹 식별정보 마스킹 검토 필요](<evidence/codyssey-permissions-evidence/file-permission-644-list.png>)
+
+![파일 권한 600 변경 명령](<evidence/codyssey-permissions-evidence/file-chmod-600-command.png>)
+
+![파일 권한 600 실제 출력](<evidence/codyssey-permissions-evidence/file-permission-600-stat.png>)
+
+![파일 권한 644 복원 상태 실제 출력](<evidence/codyssey-permissions-evidence/file-permission-644-stat.png>)
+
+![기존 실습 디렉터리 755 상태](<evidence/codyssey-permissions-evidence/directory-permission-755-stat.png>)
+
+![permission-demo 디렉터리 755·700·755 변경 전후 명령과 출력](<evidence/directory-permission-755-700-755-verified.png>)
+
 ## 3. Docker 준비 및 기본 컨테이너
 
 Windows에서 Docker Desktop을 실행한 뒤 VS Code의 WSL Ubuntu 터미널에서 확인합니다.
@@ -106,7 +187,7 @@ docker ps -a
 docker logs codyssey-hello
 ```
 
-`docker --version`은 CLI 버전, `docker version`과 `docker info`는 서버 연결 상태도 확인합니다. 관련 실제 실행 화면은 이 절의 증빙 이미지에서 확인합니다. 버전 전체가 보이는 화면은 추가 확인이 필요합니다.
+`docker --version`은 CLI 버전, `docker version`과 `docker info`는 서버 연결 상태도 확인합니다. 관련 실제 실행 화면은 이 절의 증빙 이미지에서 확인합니다. 환경 절의 새 화면에서 Docker CLI·서버 버전을 확인했습니다.
 
 Ubuntu 대화형 컨테이너:
 
@@ -154,6 +235,20 @@ docker rm codyssey-ubuntu
 
 ![종료된 Ubuntu 및 hello-world 컨테이너 상태](evidence/docker-ps-all-exited.png)
 
+### 추가 Docker 운영 실습 및 종료·유지 설명
+
+새 증빙에서 이미지 목록, 컨테이너 목록, Nginx 로그와 리소스 사용량 출력을 확인했습니다. 목록에는 `codyssey-stop-test`가 `Exited (137)`로 표시됩니다. `docker stop` 입력은 이력에 있으나 중지 명령의 반환 출력·전후 비교는 별도 확보되지 않아 직접 중지 성공을 단정하지 않습니다. 로그의 `/` 요청은 200, `/favicon.ico`는 404입니다. 아이콘 누락과 본문 제공 성공을 구분합니다.
+
+Ubuntu에서 Bash가 주 프로세스인 경우 `exit`로 Bash를 끝내면 컨테이너도 정지합니다. 기존 재시작 화면의 `docker start -ai`는 같은 컨테이너를 다시 시작하여 연결한 것입니다. `docker exec`는 실행 중인 컨테이너에 추가 프로세스를 실행하므로 그 명령이 끝나도 주 프로세스가 살아 있으면 컨테이너는 유지됩니다. 기존 파일 유지 증거와 Named Volume의 컨테이너 삭제 후 데이터 유지는 구분합니다.
+
+![Docker 이미지·컨테이너 목록 실제 결과 및 운영 명령 입력](<evidence/codyssey-docker-operations-evidence/docker-images-containers-results.png>)
+
+![Nginx 로그: 본문 요청 200과 아이콘 요청 404](<evidence/codyssey-docker-operations-evidence/docker-nginx-logs-results.png>)
+
+![docker stats --no-stream 실제 CPU·메모리 등 출력](<evidence/codyssey-docker-operations-evidence/docker-stats-results.png>)
+
+![Docker 운영 명령 이력: 성공 출력의 대체 자료가 아님](<evidence/docker-operations-command-history.png>)
+
 ## 4. Dockerfile 기반 Nginx 웹 서버와 포트 매핑
 
 확인된 `web-server/Dockerfile`의 주요 설정입니다.
@@ -188,6 +283,41 @@ Windows 브라우저에서 `http://localhost:8080`에 접속합니다. `8080`은
 ![localhost 8080 주소창과 Codyssey 웹페이지 표시](evidence/docker-web-browser-success.png)
 
 `nginx:alpine`은 변경 가능한 태그입니다. 정확한 환경 재현이 필요하면 실습 당시 `docker image inspect nginx:alpine`의 이미지 ID·RepoDigests를 추가 기록합니다.
+
+### Dockerfile 직접 작성 추가 실습
+
+별도 [Dockerfile](dockerfile-manual-practice/Dockerfile)은 다음 내용이며 기존 웹 서버 파일을 보존한 실습입니다.
+
+```dockerfile
+FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/index.html
+EXPOSE 80
+```
+
+Nginx 베이스는 정적 파일을 제공하는 웹 서버를 포함하며 Alpine 기반으로 구성되어 있습니다. 커스텀 포인트는 기본 페이지를 미션용 HTML로 교체하는 것이고, `EXPOSE 80`은 서비스 포트를 명시합니다. 실제 호스트 연결은 `-p`로 설정합니다.
+
+```bash
+# history 발췌: 원본 번호 150~156, 출력 없음
+cat web-server/Dockerfile
+mkdir -p dockerfile-manual-practice
+nano dockerfile-manual-practice/Dockerfile
+cp web-server/index.html dockerfile-manual-practice/index.html
+docker build -t codyssey-web:manual-check ./dockerfile-manual-practice
+docker run -d --name codyssey-web-manual-check -p 127.0.0.1:8081:80 codyssey-web:manual-check
+curl -i http://localhost:8081
+```
+
+nano에서 직접 작성한 내용, 빌드 `FINISHED`, 컨테이너 ID 반환 및 `curl -i http://localhost:8081`의 `HTTP/1.1 200 OK`와 미션 HTML 본문을 확인했습니다. 직접 작성·빌드·실행 및 응답 검증을 완료했습니다. 재현할 때에는 기존 컨테이너 이름·포트 사용 여부를 먼저 확인합니다.
+
+![별도 실습 폴더 생성·nano 실행·HTML 복사](<evidence/codyssey-dockerfile-evidence/dockerfile-manual-commands.png>)
+
+![nano에서 직접 작성한 Dockerfile 내용](<evidence/codyssey-dockerfile-evidence/dockerfile-manual-editor.png>)
+
+![manual-check 이미지 빌드 FINISHED](<evidence/codyssey-dockerfile-evidence/dockerfile-manual-build.png>)
+
+![8081에서 컨테이너 실행 및 ID 반환](<evidence/codyssey-dockerfile-evidence/dockerfile-manual-run.png>)
+
+![HTTP 200과 실제 HTML 응답](<evidence/codyssey-dockerfile-evidence/dockerfile-manual-http-200.png>)
 
 ## 5. Bind Mount 변경 전후 확인
 
@@ -229,6 +359,24 @@ docker volume inspect codyssey-data
 실제 화면은 `--rm`으로 쓰기 컨테이너를 자동 삭제한 뒤 새 컨테이너에서 같은 볼륨을 읽는 기록입니다. 입력 문자열은 위 재현 예시와 다릅니다.
 
 ![codyssey-data 볼륨 생성 및 새 컨테이너에서 데이터 읽기](evidence/docker-named-volume-persistence.png)
+
+### 삭제 전후 비교를 위한 추가 명령 기록
+
+```bash
+# history 발췌: 원본 번호 145~148, 출력 없음
+docker volume create codyssey-final-volume-check
+docker run --name codyssey-final-volume-before -v codyssey-final-volume-check:/data ubuntu:24.04 bash -c 'echo "Codyssey volume persistence verified" > /data/check.txt; cat /data/check.txt'
+docker rm codyssey-final-volume-before
+docker run --rm --name codyssey-final-volume-after -v codyssey-final-volume-check:/data ubuntu:24.04 cat /data/check.txt
+```
+
+새 이미지에서 삭제 전 읽기, 컨테이너 삭제 결과, 새 컨테이너의 읽기를 확인했습니다. 두 읽기에서 `Codyssey volume persistence verified`가 동일하게 출력되어 컨테이너 삭제 후 Named Volume의 데이터 유지를 검증했습니다. 위 컨테이너 삭제 명령은 이름을 정확히 확인한 별도 실습 자원에만 적용하며 기존 컨테이너·볼륨에는 적용하지 않습니다.
+
+![볼륨 연결 및 컨테이너 삭제 전 데이터 읽기](<evidence/codyssey-volume-evidence (1)/named-volume-before.png>)
+
+![쓰기 컨테이너 삭제 명령과 결과](<evidence/codyssey-volume-evidence (1)/named-volume-container-removed.png>)
+
+![새 컨테이너에서 같은 볼륨 데이터 읽기](<evidence/codyssey-volume-evidence (1)/named-volume-after.png>)
 
 ## 7. 실제 발생한 문제 해결 기록
 
@@ -333,6 +481,16 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 
 **추가 증빙 필요:** GitHub 브라우저에서 저장소 파일 목록과 README가 표시되는 화면은 아직 포함되어 있지 않습니다.
 
+### 추가 Git 설정 및 개인정보 확인
+
+Git 설정 새 화면에서 사용자 이름, 기본 브랜치 `main`, 원격 URL, 현재 브랜치와 `origin/main` 추적 설정을 확인했습니다. 기존 VS Code 화면에는 사용자 이메일과 설정 목록 일부가 있으나 오른쪽이 잘립니다. GitHub 로그인 완료를 표시하는 계정 메뉴·인증 상태는 보이지 않아 로그인은 사용자 보고로 남기며, `git config --list`의 전체 결과도 추가 확인 대상으로 구분합니다. Git은 로컬 변경 이력을 관리하고, GitHub는 원격 저장소 공유·협업을 제공합니다.
+
+기존 이미지에는 사용자명·호스트명·사용자 경로가 보입니다. Git push 화면에는 공개 제출 저장소의 GitHub 계정명도 포함됩니다. `vscode-github-login-confirmed.png`에는 이메일 값 일부가 보입니다. 전체 주소나 noreply 여부는 잘린 화면으로 확정하지 않습니다. 공개 저장소 주소는 결과 링크로 유지하되 불필요한 개인 식별정보는 마스킹 검토 대상입니다. 비밀번호·토큰·개인키·인증 코드는 공개하면 안 됩니다. 원본 이미지는 이번 정리에서 수정하지 않았습니다.
+
+![Git 사용자 이름·기본 브랜치·원격·추적 설정 실제 출력](<evidence/git-configuration-verified.png>)
+
+![VS Code 소스 제어와 일부 Git 설정: 로그인 확인 화면은 아님, 이메일 마스킹 필요](<evidence/vscode-github-login-confirmed.png>)
+
 ## 9. 실제 출력과 제출 전 확인
 
 문서 작성 시 파일 조회로 확인한 결과:
@@ -346,16 +504,38 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 
 위 결과는 `stat -c '%a %s %n'` 출력이며 순서대로 권한·크기(바이트)·경로입니다. 디렉터리 크기는 환경에 따라 달라질 수 있습니다. Docker 실행 화면은 관련 실습 절의 증빙 이미지로 연결했습니다.
 
-- [ ] Docker CLI·서버 실제 버전과 성공 출력 추가
-- [ ] CLI 및 권한 변경 과정 증거 추가
-- [ ] hello-world 및 Ubuntu 대화형 컨테이너 실행 증거 추가
-- [ ] 이미지 빌드·포트 매핑·주소창 포함 브라우저 증거 추가
-- [ ] Bind Mount 변경 전후 및 Named Volume 영속성 결과 추가
-- [ ] 실제 오류 2건의 원문·해결 과정·해결 후 결과 추가
-- [x] `evidence/`의 PNG 21개를 관련 절에 중복 없이 연결하고 상대경로 확인
-- [ ] 명령어를 실행 환경에서 따라 하며 재현성 확인
-- [ ] Git 사용자 설정·main 브랜치·VS Code 및 GitHub 연동 확인
-- [ ] 스크린샷과 커밋 대상에 비밀번호·토큰·개인키·비공개 개인정보가 없는지 확인
-- [ ] GitHub에서 파일·이미지·README 표시 및 제출 URL 확인
+- [x] 실행 환경 및 Docker CLI·서버 버전 실제 출력 연결
+- [x] CLI 위치·목록·내용 조회 실제 결과 연결
+- [ ] CLI 생성·빈 파일·복사·이동·삭제 당시 결과 증빙 확인(history와 구분)
+- [x] 파일 644·600·644 및 디렉터리 755·700·755 변경 증거 연결
+- [x] hello-world 및 Ubuntu 대화형·재시작 증거 연결
+- [x] Docker 이미지·컨테이너 목록·로그·리소스 출력 연결
+- [ ] docker stop 직접 실행 결과·전후 기록 확인(이력과 종료 상태는 있음)
+- [x] Dockerfile 직접 작성·빌드·실행·HTTP 200 증거 연결
+- [x] 포트 매핑·주소창 포함 브라우저 증거 연결
+- [x] Bind Mount 변경 전후 및 Named Volume 삭제 전후 데이터 유지 증거 연결
+- [x] 트러블슈팅 2건 기록 및 관련 증거 연결(일부 단계는 사용자 보고)
+- [x] PNG 45개를 각각 한 번씩 연결하고 상대경로 확인
+- [x] Git 기본 브랜치·사용자 이름·원격·추적 설정 증거 연결
+- [ ] 전체 Git 설정 결과 및 VS Code GitHub 로그인 상태 확인
+- [ ] 불필요한 개인 식별정보 마스킹·공개 전 검토
+- [ ] 최종 커밋·업로드 후 GitHub에서 전체 문서·파일 접근 확인
+
+### 공개 전 보안 검토
+
+원본 이미지는 수정하지 않았으며 이번 작업은 공개·업로드를 수행하지 않았습니다. CLI·Docker 운영·Git·디렉터리 검증 이미지의 프롬프트에는 사용자명·호스트명·개인 경로가 있습니다. 특히 `vscode-github-login-confirmed.png`의 이메일 값과 `file-permission-644-list.png`의 소유자·그룹 표시를 검토합니다. 공개 제출 저장소 URL은 유지할 수 있지만 불필요한 식별정보는 공개 전 마스킹 대상으로 남깁니다. `.gitignore`는 이미지 안의 개인정보를 숨기지 않습니다.
 
 `.gitignore`는 아직 추적하지 않는 파일에 적용되며 이미 커밋된 비밀 정보를 제거하지 않습니다. `.env.example`과 `.env.sample`에는 실제 비밀값을 넣지 않습니다. 증거에는 주소창·실행 결과를 남기되 불필요한 개인정보를 가립니다.
+
+## 개인정보 이력 정리 안내
+
+공개 전 개인정보 보호를 위해 과거 이미지 원본을 Git 이력에서 제거하고 마스킹된 증빙을 다시 등록했습니다. 기존 Git 스크린샷의 커밋 ID는 **이력 정리 전 실제 수행 기록**이며 현재 이력의 ID와 다릅니다. 화면의 명령·결과·커밋 ID는 바꾸지 않았습니다. 공개용 이미지에는 개인정보 영역에 불투명 마스킹을 적용했으며 원본은 공개 저장소 밖에 비공개로 보관합니다.
+
+아래 `/path/to/mission-1-1`은 예시 경로입니다. 저장소를 clone한 실제 경로로 바꾸어 실행합니다.
+
+| 정리 전 커밋 | 정리 후 대응 커밋 |
+| --- | --- |
+| `10e3f6a` | `b3eab07` |
+| `25f4e69` | `9ea079a` |
+| `ba953fe` | `b7ac455` |
+| `e4361d0` | `69d09a4` |

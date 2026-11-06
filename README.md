@@ -136,6 +136,8 @@ ls -ld cli-replay
 
 ![permission-test 디렉터리의 rwxr-xr-x 권한 확인](evidence/linux-directory-permission-755-confirmed.png)
 
+CLI 증거는 역할을 나누어 읽습니다. `linux-cli-command-history.png`는 생성·복사·이동·삭제 명령 입력, `linux-cli-execution-results.png`는 위치·목록·내용의 실제 결과입니다. `file-permission-644-list.png`는 남아 있는 파일 목록이고 `cli-remove-confirmation-prompt.png`는 삭제 확인 질문입니다. 이 자료만으로 복사 직후 동일성·이름 변경 직후 목록·삭제 응답을 새로 만들어 설명하지 않습니다.
+
 ### 추가 파일·디렉터리 권한 실습
 
 ```bash
@@ -248,6 +250,8 @@ Ubuntu에서 Bash가 주 프로세스인 경우 `exit`로 Bash를 끝내면 컨�
 ![docker stats --no-stream 실제 CPU·메모리 등 출력](<evidence/codyssey-docker-operations-evidence/docker-stats-results.png>)
 
 ![Docker 운영 명령 이력: 성공 출력의 대체 자료가 아님](<evidence/docker-operations-command-history.png>)
+
+중지 증거는 기존 `docker-operations-command-history.png`의 `docker stop codyssey-stop-test` 입력과 `docker-images-containers-results.png`의 종료 상태를 함께 참조합니다. 종료 상태만으로 종료 원인을 확정하지 않습니다. 공식 요구사항은 중지 명령·결과 기록이며 특정 전후 캡처 형식을 별도로 지정하지 않습니다.
 
 ## 4. Dockerfile 기반 Nginx 웹 서버와 포트 매핑
 
@@ -483,13 +487,21 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 
 ### 추가 Git 설정 및 개인정보 확인
 
-Git 설정 새 화면에서 사용자 이름, 기본 브랜치 `main`, 원격 URL, 현재 브랜치와 `origin/main` 추적 설정을 확인했습니다. 기존 VS Code 화면에는 사용자 이메일과 설정 목록 일부가 있으나 오른쪽이 잘립니다. GitHub 로그인 완료를 표시하는 계정 메뉴·인증 상태는 보이지 않아 로그인은 사용자 보고로 남기며, `git config --list`의 전체 결과도 추가 확인 대상으로 구분합니다. Git은 로컬 변경 이력을 관리하고, GitHub는 원격 저장소 공유·협업을 제공합니다.
+기존 Git 설정 화면에서 사용자 이름, 기본 브랜치 `main`, 제출 저장소의 원격 URL 및 추적 설정을 확인했습니다. 새 `git-config-list-evidence.png`에는 `git config --list` 입력과 결과가 함께 보이며 `init.defaultbranch=main`, `branch.main.remote=origin`, `branch.main.merge=refs/heads/main`을 확인했습니다. 사용자 이름·이메일·원격 URL 값 일부는 회색 사각형으로 가려져 있어 숨겨진 값을 추정하지 않습니다. 원격 주소는 기존 `git-configuration-verified.png`와 제출 URL로 확인합니다. 새 계정 메뉴 화면에는 `(GitHub)`와 `로그아웃`이 보여 VS Code의 GitHub 로그인 상태를 확인했습니다. 계정명은 가려져 있으므로 특정 계정명 자체를 판독했다고 주장하지 않습니다. Git은 로컬 변경 이력을 관리하고, GitHub는 원격 저장소 공유·협업을 제공합니다.
 
 기존 이미지에는 사용자명·호스트명·사용자 경로가 보입니다. Git push 화면에는 공개 제출 저장소의 GitHub 계정명도 포함됩니다. `vscode-github-login-confirmed.png`에는 이메일 값 일부가 보입니다. 전체 주소나 noreply 여부는 잘린 화면으로 확정하지 않습니다. 공개 저장소 주소는 결과 링크로 유지하되 불필요한 개인 식별정보는 마스킹 검토 대상입니다. 비밀번호·토큰·개인키·인증 코드는 공개하면 안 됩니다. 원본 이미지는 이번 정리에서 수정하지 않았습니다.
 
 ![Git 사용자 이름·기본 브랜치·원격·추적 설정 실제 출력](<evidence/git-configuration-verified.png>)
 
-![VS Code 소스 제어와 일부 Git 설정: 로그인 확인 화면은 아님, 이메일 마스킹 필요](<evidence/vscode-github-login-confirmed.png>)
+![기존 VS Code 소스 제어와 일부 설정: 로그인 증거는 아래 새 이미지 참조](<evidence/vscode-github-login-confirmed.png>)
+
+### 최종 추가 Git 증빙
+
+![VS Code 계정 메뉴의 GitHub 표시와 로그아웃: 로그인 상태 확인](evidence/vscode-github-login-evidence.png)
+
+![git config --list 실제 결과: 기본 브랜치와 main 원격 추적 설정](evidence/git-config-list-evidence.png)
+
+두 이미지는 기존 history·소스 제어 화면과 다른 추가 증거입니다. 공개용 입력 파일의 회색 마스킹을 그대로 유지해 복사했으며 픽셀이나 실행 결과를 변경하지 않았습니다. 프롬프트의 컴퓨터 호스트명과 로컬 사용자명이 남아 있습니다. 호스트명 공개는 사용자 허용 범위이며, 기존 증빙보다 마스킹 범위가 좁다는 점은 공개 전 확인 대상으로 남깁니다.
 
 ## 9. 실제 출력과 제출 전 확인
 
@@ -515,15 +527,15 @@ Git 설정 새 화면에서 사용자 이름, 기본 브랜치 `main`, 원격 UR
 - [x] 포트 매핑·주소창 포함 브라우저 증거 연결
 - [x] Bind Mount 변경 전후 및 Named Volume 삭제 전후 데이터 유지 증거 연결
 - [x] 트러블슈팅 2건 기록 및 관련 증거 연결(일부 단계는 사용자 보고)
-- [x] PNG 45개를 각각 한 번씩 연결하고 상대경로 확인
+- [x] PNG 47개를 각각 한 번씩 연결하고 상대경로 확인
 - [x] Git 기본 브랜치·사용자 이름·원격·추적 설정 증거 연결
-- [ ] 전체 Git 설정 결과 및 VS Code GitHub 로그인 상태 확인
+- [x] git config --list 결과 및 VS Code GitHub 로그인·저장소 연동 증거 연결
 - [ ] 불필요한 개인 식별정보 마스킹·공개 전 검토
 - [ ] 최종 커밋·업로드 후 GitHub에서 전체 문서·파일 접근 확인
 
 ### 공개 전 보안 검토
 
-원본 이미지는 수정하지 않았으며 이번 작업은 공개·업로드를 수행하지 않았습니다. CLI·Docker 운영·Git·디렉터리 검증 이미지의 프롬프트에는 사용자명·호스트명·개인 경로가 있습니다. 특히 `vscode-github-login-confirmed.png`의 이메일 값과 `file-permission-644-list.png`의 소유자·그룹 표시를 검토합니다. 공개 제출 저장소 URL은 유지할 수 있지만 불필요한 식별정보는 공개 전 마스킹 대상으로 남깁니다. `.gitignore`는 이미지 안의 개인정보를 숨기지 않습니다.
+기존 PNG 45개는 검증된 공개용 자료이며, 개인정보가 확인된 31개에는 불투명 마스킹이 적용되어 있습니다. 새 이미지 2개는 제공된 회색 마스킹 상태 그대로 복사했습니다. 새 화면의 호스트명·로컬 사용자 프롬프트는 남아 있어 기존 정책과 차이가 있습니다. 계정명·이메일 값은 가려져 있으며 검사 화면에서 비밀번호·토큰·개인키·인증 코드는 식별하지 못했습니다. `.gitignore`는 이미지 내부 개인정보를 숨기지 않습니다. 이번 작업은 공개·업로드를 수행하지 않았습니다.
 
 `.gitignore`는 아직 추적하지 않는 파일에 적용되며 이미 커밋된 비밀 정보를 제거하지 않습니다. `.env.example`과 `.env.sample`에는 실제 비밀값을 넣지 않습니다. 증거에는 주소창·실행 결과를 남기되 불필요한 개인정보를 가립니다.
 
@@ -539,3 +551,29 @@ Git 설정 새 화면에서 사용자 이름, 기본 브랜치 `main`, 원격 UR
 | `25f4e69` | `9ea079a` |
 | `ba953fe` | `b7ac455` |
 | `e4361d0` | `69d09a4` |
+
+## 공식 필수 요구사항 최종 대조
+
+기준은 [공식 원문](mission-requirements.md)의 2·4·7절입니다. 3절은 기술 설명, 5절은 선택 과제로 분리하며 8절의 예시는 필수 조건으로 추가하지 않습니다. 아래 상태는 현재 로컬 문서·파일·증빙 기준이며 새 자료의 원격 업로드 완료를 뜻하지 않습니다.
+
+| 공식 필수 항목 | 판정 | 근거 및 제한 |
+| --- | --- | --- |
+| 제출 URL·프로젝트 개요·결과 링크 | 완료 | 제출 URL, 프로젝트 목적, 실습별 이미지·문서 링크 |
+| 실행 환경 OS·Shell·터미널·Docker·Git | 완료 | 환경 이미지의 실제 버전과 VS Code 통합 터미널 화면 |
+| 체크리스트·재현 절차·기술 설명 | 완료 | 경로 대체 안내, 명령 코드블록, 권한·포트·볼륨·Git 역할 설명 |
+| CLI 생성·빈 파일·복사·이동·삭제 | 부분 충족 | 명령 이력과 일부 실제 결과 있음. 모든 당시 결과가 직접 보이지는 않음 |
+| 파일·디렉터리 권한 변경 전후 | 완료 | 파일 644·600·644 및 디렉터리 755·700·755 실제 결과 |
+| Docker 버전·정상 서버 점검 | 완료 | CLI·서버 버전 실제 출력 및 기존 Docker 정보 |
+| 이미지 다운로드·목록·컨테이너 실행·목록·로그·리소스 | 완료 | 기존 pull·run, 새 images·ps·logs·stats 출력 |
+| 컨테이너 직접 중지 결과 | 부분 충족 | stop 입력 이력과 종료 상태 있음. 직접 반환 결과는 미확보 |
+| hello-world·Ubuntu 내부 명령·종료/유지 차이 | 완료 | 실제 실행·재진입 화면 및 주 프로세스와 exec 설명 |
+| Dockerfile 직접 작성·커스텀 목적·빌드·실행 | 완료 | nano 작성 화면, 소스 파일, 빌드 완료·실행·HTTP 200 |
+| 포트 매핑·주소창 포함 브라우저 | 완료 | 실행 명령과 localhost:8080 브라우저 응답 |
+| Bind Mount 변경 전후 | 완료 | 호스트 변경 전후 컨테이너 읽기 결과 |
+| Named Volume 삭제 전후 데이터 유지 | 완료 | 생성 이력, 연결·삭제 전 읽기·삭제·새 컨테이너 읽기 |
+| Git 사용자·기본 브랜치·config --list | 완료 | 기존 사용자·원격 설정과 새 전체 목록 화면. 비공개 값은 마스킹 |
+| VS Code GitHub 로그인·저장소 연동 | 완료 | 새 GitHub 계정 메뉴·로그아웃 화면 + 기존 소스 제어·원격·추적 설정 |
+| 트러블슈팅 2건 | 완료 | 문제·원인 확인·해결/대안 기록과 관련 증거. 일부 단계는 사용자 제공 기록 |
+| 보안·개인정보 보호 | 부분 충족 | 인증 비밀정보는 식별되지 않음. 새 화면의 사용자·호스트 표시와 기존 마스킹 정책 차이 검토 필요 |
+
+현재 검토에서 필수 실습의 확정적인 미수행을 뜻하는 ‘미충족’ 항목은 없습니다. 부분 충족은 문서만으로 성공을 확정할 수 없는 증거 범위입니다. 보너스 Compose·환경 변수·SSH는 필수 미완료로 계산하지 않습니다.

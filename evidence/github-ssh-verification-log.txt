@@ -64,3 +64,42 @@ Everything up-to-date는 새 커밋을 전송했다는 의미가 아니며 향�
 키는 저장소 밖 ~/.ssh/id_ed25519_codyssey 및 .pub에 보관합니다.
 원본 개인키 파일은 복사하거나 제출하지 않습니다.
 향후 실제 SSH Push를 별도로 승인받아 수행한 뒤 명령·실제 출력·종료 코드·원격 커밋 확인을 추가할 수 있습니다.
+
+[5] 최종 실제 SSH Push — 사용자 터미널에서 확인한 출력, 사용자 제공
+아래는 앞의 초기 문서화 이후 사용자가 WSL 터미널에서 실행했다고 제공한 결과입니다.
+앞 절의 미커밋·미업로드·실제 Push 미수행 문구는 초기 기록 시점의 상태입니다.
+- 접속 방식: SSH, ssh.github.com, 포트 443.
+- 저장소: inyoung7-lab/ia-codyssey-allinone-test1-1, 브랜치 main.
+- 이전 원격 커밋: bf19ba0dd960b9c360284c407b1d62a25ceb79e2
+- 업로드한 커밋: b4fc41e1ffdfeb1b0ca64ea2c08c22960faf5b44
+- 사용자가 제공한 실제 Push 출력 발췌:
+bf19ba0..b4fc41e main -> main
+- 객체 전송 및 원격 delta 처리 완료, 강제 Push 미사용 — 사용자 제공 사실.
+- 전체 Push 명령 원문·전체 출력·정확한 실행 시각·종료 코드는 제공되지 않아 생성하지 않음.
+- 실제 Push는 사용자가 실행했으며 Codex가 실행했다고 주장하지 않음.
+- 기존 HTTPS origin은 유지했으며 SSH URL을 이용해 실제 Push했다는 사용자 보고입니다.
+
+[6] Codex의 이번 SSH 443 원격 main 조회 — 직접 실행
+시각: 2026-11-07T11:49:11.377773+09:00
+개인 홈 절대경로만 [HOME]으로 마스킹했습니다. 추가 출력 생략 없음.
+$ GIT_SSH_COMMAND='ssh -i [HOME]/.ssh/id_ed25519_codyssey -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -p 443' git ls-remote ssh://git@ssh.github.com:443/inyoung7-lab/ia-codyssey-allinone-test1-1.git refs/heads/main
+git@ssh.github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+[exit=128]
+이번 조회는 인증 실패로 원격 커밋 값을 얻지 못했습니다.
+따라서 원격 main이 b4fc41e1ffdfeb1b0ca64ea2c08c22960faf5b44와 현재 일치하는지는 Codex가 직접 검증하지 못했습니다.
+사용자 실제 Push 성공 보고는 보존하며 직접 조회 성공으로 바꾸지 않습니다.
+이번 README·공개 로그 갱신분은 아직 커밋·업로드하지 않았습니다.
+
+[7] 첫 번째 실제 SSH Push의 원격 반영 확인 — 사용자 제공 결과
+사용자가 WSL 터미널에서 원격 main을 직접 조회하여 다음 결과를 확인했다고 제공했습니다.
+아래는 사용자 터미널에서 확인한 출력이며 Codex가 직접 조회한 결과가 아닙니다.
+b4fc41e1ffdfeb1b0ca64ea2c08c22960faf5b44 refs/heads/main
+이 결과는 첫 번째 실제 Push로 업로드한 커밋과 원격 main의 일치를 사용자 터미널에서 확인한 증빙입니다.
+조회 명령 전체·정확한 실행 시각·개별 종료 코드는 제공되지 않아 추가하지 않았습니다.
+Codex 환경의 SSH 인증 실패와 직접 원격 확인 불가 기록은 그대로 보존합니다.
+이번 최종 문서 보완을 담는 새 로컬 커밋은 아직 GitHub에 Push하지 않았습니다.

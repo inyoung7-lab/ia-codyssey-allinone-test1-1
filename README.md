@@ -993,7 +993,7 @@ docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus4-
 
 ## 14. 보너스 5 — GitHub SSH 키 설정
 
-공식 기준은 [미션 원문](mission-requirements.md) 5절의 “HTTPS 대신 SSH로 푸시가 가능하도록 키를 등록하고 동작을 확인한다”입니다. [출처를 구분한 공개 검증 기록](evidence/github-ssh-verification-log.txt)에 사용자 터미널의 결과와 Codex의 기존 직접 확인·실패 기록을 분리했습니다. 이번 문서화에서 인증이나 Push를 다시 수행하지 않았습니다.
+공식 기준은 [미션 원문](mission-requirements.md) 5절의 “HTTPS 대신 SSH로 푸시가 가능하도록 키를 등록하고 동작을 확인한다”입니다. [출처를 구분한 공개 검증 기록](evidence/github-ssh-verification-log.txt)에 사용자 터미널의 결과와 Codex의 기존 직접 확인·실패 기록을 분리했습니다. 이번 최종 보완에서는 SSH 원격 조회만 시도했으며 인증 실패를 기록했습니다. 실제 Push는 사용자가 수행했습니다.
 
 ### 키 생성·등록 과정과 보호
 
@@ -1015,10 +1015,10 @@ Codex는 기존 직접 조회에서 개인키·공개키의 존재와 권한 `60
 | SSH 22번 | `Connection reset`으로 연결 실패 |
 | SSH 443번 | GitHub 계정 인증 성공 |
 | 저장소 접근 | SSH 443번 `git ls-remote` 성공 |
-| 원격 main | `bf19ba0dd960b9c360284c407b1d62a25ceb79e2` |
+| 사전 검증 당시 원격 main | `bf19ba0dd960b9c360284c407b1d62a25ceb79e2` |
 | 에이전트 | 실행 및 키 등록 성공, `ssh-add -l`에서 Ed25519 키 확인 |
 | Push 사전 점검 | SSH 443번 `git push --dry-run` 성공 |
-| 실제 SSH Push | 아직 수행하지 않음 |
+| 실제 SSH Push | 사용자 최종 보고상 `b4fc41e` 업로드 성공(아래 추가 기록) |
 
 사용자 터미널에서 확인한 dry-run 출력:
 
@@ -1026,7 +1026,7 @@ Codex는 기존 직접 조회에서 개인키·공개키의 존재와 권한 `60
 Everything up-to-date
 ```
 
-이는 실제 Push 성공이나 보너스 변경분 업로드 증거가 아닙니다. `Everything up-to-date`는 새 커밋을 전송했다는 의미도 아닙니다. 실제 SSH Push 증거는 추후 별도로 승인한 최종 반영 후 추가합니다.
+이는 실제 Push 성공이나 보너스 변경분 업로드 증거가 아닙니다. `Everything up-to-date`는 새 커밋을 전송했다는 의미도 아닙니다. 이후 사용자가 실제 SSH Push에 성공했다고 제공한 기록을 아래에 별도로 추가했습니다.
 
 ### SSH 443번 대체 연결과 재현 안내
 
@@ -1059,14 +1059,36 @@ fatal: Could not read from remote repository.
 
 HTTPS origin은 기존 제출 설정과 다른 실습에 영향을 주지 않기 위해 유지했습니다. SSH URL을 명령에 직접 지정해도 SSH 접근을 확인할 수 있습니다. 공개 로그의 개인 홈 경로는 `[HOME]`으로 마스킹하고 범위를 명시했습니다. 기존 PNG 51개 및 보너스 1~4 자료는 변경하지 않습니다.
 
-공개 로그 SHA-256: `95510fbe49e90d711c3ef3ddb0b0f7e283d8e230395d770730d943d72b3ca9b4`.
+### 최종 실제 SSH Push와 원격 조회 결과
+
+**사용자 터미널에서 확인한 출력:** SSH `ssh.github.com:443`으로 `main`에 실제 Push했고 객체 전송·원격 delta 처리가 완료됐으며 강제 Push는 사용하지 않았다고 보고했습니다. 이전 커밋은 `bf19ba0dd960b9c360284c407b1d62a25ceb79e2`, 업로드한 커밋은 `b4fc41e1ffdfeb1b0ca64ea2c08c22960faf5b44`입니다.
+
+```text
+bf19ba0..b4fc41e main -> main
+```
+
+이는 앞의 dry-run과 다른 실제 Push 결과이며 사용자가 실행했습니다. 제공되지 않은 전체 명령·출력·종료 코드·Push 시각은 만들지 않았습니다.
+
+**Codex 직접 검증:** 2026-11-07T11:49:11.377773+09:00에 전용 키·SSH 443으로 `git ls-remote`를 실행했으나 `Permission denied (publickey)`와 종료 코드 `128`로 실패했습니다. 원격 커밋을 얻지 못해 현재 원격 main과 `b4fc41e`의 일치는 직접 확인하지 못했습니다. 사용자 보고를 Codex 검증 성공으로 표현하지 않습니다. HTTPS origin은 변경하지 않았습니다.
+
+**후속 사용자 원격 확인:** 사용자가 WSL 터미널에서 직접 원격 main을 조회하여 다음 출력을 확인했다고 제공했습니다.
+
+```text
+b4fc41e1ffdfeb1b0ca64ea2c08c22960faf5b44 refs/heads/main
+```
+
+첫 번째 SSH Push의 원격 반영은 이 사용자 제공 조회 결과로 확인했습니다. Codex가 직접 검증한 결과와는 구분하며, 위 인증 실패 기록은 유지합니다. 조회 명령 전체·시각·종료 코드는 제공되지 않아 만들지 않았습니다. 이 최종 증빙 보완을 담는 후속 로컬 커밋은 아직 업로드하지 않았습니다.
+
+공개 로그 SHA-256: `672a3473b0770d9377a800a80cd28b86380a8906525d9e1ba2f69c132c8adf0c`.
 
 - [x] 전용 키 존재·권한 확인, 사용자 보고상 GitHub 등록 완료
 - [x] 사용자 터미널 보고상 SSH 443 계정 인증·원격 조회·Push dry-run 성공
 - [x] Codex 직접 확인과 사용자 제공 결과 및 실패 기록 구분
-- [ ] 최종 SSH 실제 Push와 원격 반영 증빙 추가
+- [x] 사용자 제공 실제 SSH Push 성공 출력 추가
+- [x] 사용자 터미널의 원격 main 조회 결과와 첫 Push 커밋 일치 기록
+- [ ] Codex 환경의 직접 SSH 조회 성공(기존 인증 실패 기록 유지)
 
-이 상태는 사용자 제공 성공 결과를 포함한 문서화이며 Codex 환경에서 전체 인증을 재현했다는 뜻이 아닙니다. 공식 평가 결과를 보장하지 않으며, 실제 Push와 보너스 변경분의 최종 원격 확인은 남아 있습니다.
+이 상태는 사용자 제공 성공 결과를 포함한 문서화이며 Codex 환경에서 전체 인증을 재현했다는 뜻이 아닙니다. 사용자 터미널의 실제 SSH Push 및 후속 원격 조회 결과를 기록했습니다. Codex의 직접 원격 확인은 인증 실패로 미검증이며 이 한계를 유지합니다. 이번 최종 문서 보완분의 GitHub 업로드는 아직 수행하지 않았습니다.
 
 ### 공개 로그의 줄 끝 공백 정규화
 

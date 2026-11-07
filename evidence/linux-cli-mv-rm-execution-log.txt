@@ -1,0 +1,46 @@
+Linux CLI mv/rm 추가 검증
+새로 수행한 실습이며 과거 실행 기록이 아닙니다.
+작업 위치는 비공개로 생략합니다.
+
+$ date -u +실행\ 시각\(UTC\):\ %Y-%m-%dT%H:%M:%SZ
+실행 시각(UTC): 2026-11-07T01:25:38Z
+[exit=0] 성공
+
+$ bash -c set\ -C\;\ printf\ \"%s\\n\"\ \"CLI\ rename\ and\ removal\ verification\"\ \>\ source.txt
+[exit=0] 성공
+
+$ ls -1 -- source.txt
+source.txt
+[exit=0] 성공
+
+$ test \! -e renamed.txt
+[exit=0] 성공
+
+$ mv -n -- source.txt renamed.txt
+[exit=0] 성공
+
+$ test \! -e source.txt
+[exit=0] 성공
+
+$ test -f renamed.txt
+[exit=0] 성공
+
+$ ls -1 -- renamed.txt
+renamed.txt
+[exit=0] 성공
+
+$ cat -- renamed.txt
+CLI rename and removal verification
+[exit=0] 성공
+
+$ rm -- renamed.txt
+[exit=0] 성공
+
+$ test \! -e renamed.txt
+[exit=0] 성공
+
+$ bash -c test\ \!\ -e\ source.txt\ \&\&\ test\ \!\ -e\ renamed.txt\ \&\&\ printf\ \"%s\\n\"\ \"검증\ 완료:\ 실습\ 파일\ 두\ 이름\ 모두\ 존재하지\ 않음\"
+검증 완료: 실습 파일 두 이름 모두 존재하지 않음
+[exit=0] 성공
+
+최종 판정: 모든 단계 성공

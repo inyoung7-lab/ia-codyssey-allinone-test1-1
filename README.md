@@ -5,11 +5,11 @@
 ## 실행 환경 및 검증 기준
 
 - 사용자 제공 환경: Windows 11 + WSL2 Ubuntu + Docker Desktop, VS Code + WSL 확장
-- 작업 경로: `/path/to/mission-1-1`
+- 재현 경로: clone한 프로젝트 루트(`PROJECT_DIR`). `/path/to/mission-1-1`은 개인 경로가 아닌 예시입니다.
 - 기본 브랜치: `main` (사용자 제공 정보)
 - Docker Desktop에서 WSL2 엔진과 해당 Ubuntu 배포판의 WSL 통합이 활성화되어 있어야 합니다.
-- 명령어는 **재현 안내**, **셸 history 발췌**, **이번 파일 조회 결과**로 구분합니다. 재현 안내는 실행 증거가 아니며, history에는 성공 여부를 판단할 출력이 없습니다. 이번 문서 정리에서 Docker 실행·중지·삭제 및 Git add·commit·push는 수행하지 않았습니다.
-- 실제 출력·파일로 확인한 사실과 사용자 보고·명령 이력을 구분합니다. 각 이미지의 확인 범위를 캡션에 표시하며, 개인정보 마스킹과 최종 GitHub 반영 점검은 남아 있습니다.
+- 명령어는 **재현 안내**, **셸 history 발췌**, **파일 조회 결과**, **2026-11-07 추가 검증 로그**로 구분합니다. 재현 안내는 실행 증거가 아니며, history에는 성공 여부를 판단할 출력이 없습니다. 이번 문서 정리에서 Docker 실행·중지·삭제 및 Git add·commit·push는 수행하지 않았습니다.
+- 실제 출력·파일로 확인한 사실과 사용자 보고·명령 이력을 구분합니다. 각 이미지의 확인 범위를 캡션에 표시합니다. 기존 공개용 PNG의 마스킹은 유지하며, 이번 README·새 로그의 최종 GitHub 반영 확인은 별도입니다.
 
 ### 공식 기준 및 추가 실습 자료
 
@@ -17,6 +17,7 @@
 
 - [추가 명령어 이력](evidence/cli-docker-command-history.txt): history 134~160번. 명령 입력 기록이며 실행 출력은 포함하지 않습니다.
 - [CLI 실습 파일](cli-evidence-practice/practice-empty.txt): 현재 28바이트입니다. 이름과 달리 현재 빈 파일은 아니며, 과거 `touch` 수행 여부는 별도 로그로 확인해야 합니다.
+- [mv·rm 추가 검증 원본 로그](evidence/linux-cli-mv-rm-execution-log.txt): 2026-11-07 10:25:38 KST에 수행한 별도 검증입니다. 명령·출력·각 종료 코드를 포함합니다.
 - [직접 작성 실습 Dockerfile](dockerfile-manual-practice/Dockerfile), [정적 HTML](dockerfile-manual-practice/index.html)
 
 환경 증빙의 실제 출력에서 WSL 호스트 Ubuntu 26.04.1 LTS, Bash(`/bin/bash`), Docker CLI·서버 29.9.2, Git 2.53.0을 확인했습니다. 기존 Ubuntu 24.04 컨테이너와 호스트 OS 버전은 서로 다른 환경입니다. 터미널은 VS Code 통합 터미널 사용 화면이 있습니다.
@@ -25,16 +26,23 @@
 
 ### 개인 경로를 바꾸어 재현하는 방법
 
-아래 기존 절의 `/path/to/mission-1-1`은 작성자 작업 경로입니다. 평가자는 저장소를 clone한 실제 위치를 사용하고 그 경로를 모든 `cd` 명령에 일관되게 대체합니다. Docker Desktop의 해당 WSL 배포판 통합을 켜고 WSL 터미널에서 실행합니다. 같은 이름의 컨테이너·파일이나 점유된 포트가 있으면 새 이름·빈 포트를 사용하며, 기존 자원을 임의 삭제하지 않습니다.
+`/path/to/mission-1-1`은 예시 경로입니다. 아래에서 clone한 실제 위치를 `PROJECT_DIR`에 저장하고, 후속 재현 명령은 이 프로젝트 루트를 사용합니다. 새 터미널을 열면 실제 clone 위치로 이동한 뒤 `export PROJECT_DIR="$PWD"`를 다시 실행합니다. Docker Desktop의 해당 WSL 배포판 통합을 켜고 WSL 터미널에서 실행합니다. 같은 이름의 컨테이너·파일이나 점유된 포트가 있으면 새 이름·빈 포트를 사용하며, 기존 자원을 임의 삭제하지 않습니다.
 
 ```bash
 # 재현 안내: 원하는 상위 폴더에서 저장소가 아직 없을 때
 git clone https://github.com/inyoung7-lab/ia-codyssey-allinone-test1-1.git
 cd ia-codyssey-allinone-test1-1
+export PROJECT_DIR="$PWD"
 pwd
 ```
 
-후속 상대경로는 이 프로젝트 루트를 기준으로 합니다.
+후속 상대경로는 이 프로젝트 루트를 기준으로 합니다. 아래 코드는 **재현 안내**이며 이번 문서 정리에서 실행한 결과가 아닙니다.
+
+재현 순서는 환경 준비·clone → 1절 CLI → 2절 권한 → 3절 Docker/Ubuntu → 4절 웹 서버 → 5절 Bind Mount → 6절 Named Volume → 8절 Git 상태 확인입니다. Ubuntu 컨테이너 내부 명령과 WSL 호스트 명령은 구분합니다. 7절은 과거 장애 기록이며 재현을 위해 오류를 일부러 만들 필요가 없습니다. 8절의 설정·커밋·Push는 필요한 경우에만 사용자가 검토 후 수행합니다.
+
+CLI 재현은 새 `cli-replay/`만 사용합니다. 이름이 이미 있으면 해당 블록을 중단하고 새 폴더명으로 CLI·권한 절의 경로를 함께 바꿉니다. Docker도 기존 자원을 삭제하여 이름을 확보하지 말고, 충돌 시 새 이름·빈 포트를 정해 관련 후속 명령에 일관되게 반영합니다. Named Volume 재현은 기존 실습 데이터와 구분한 새 볼륨명을 사용하고, 컨테이너 삭제는 해당 블록에서 새로 생성한 쓰기 컨테이너에만 적용합니다. Bind Mount의 `replay.txt`가 이미 있으면 새 파일명을 사용합니다.
+
+이 순서와 상대경로는 문서·파일 대조로 점검했습니다. 독립된 Windows/WSL/Docker 환경에서 전체 절차를 재실행하여 검증한 것은 아닙니다.
 
 ## 프로젝트 구성
 
@@ -42,6 +50,12 @@ pwd
 mission-1-1/
 ├── .gitignore
 ├── README.md
+├── mission-requirements.md
+├── evidence/                 # PNG 51개 및 TXT 증빙
+├── cli-evidence-practice/    # 기존 CLI 실습 파일
+├── dockerfile-manual-practice/
+│   ├── Dockerfile
+│   └── index.html
 ├── practice.txt
 ├── permission-test/
 │   ├── hello.txt
@@ -60,10 +74,12 @@ mission-1-1/
 
 사용자는 기본 CLI 실습을 수행했습니다. 아래에서 실제 결과가 있는 조회 화면과 명령 이력만 있는 생성·복사·이동 기록을 구분합니다.
 
-다음 명령어는 기존 파일과 구분한 `cli-replay/`에서 한 번씩 수행하는 재현 예시입니다. 같은 폴더가 이미 있다면 먼저 내용을 확인하고 다른 이름을 사용합니다.
+다음 명령어는 기존 파일과 구분한 새 `cli-replay/`에서 수행하는 재현 예시입니다. 서브셸의 `set -e`는 폴더 생성 등 명령이 실패하면 뒤의 파일 조작을 중단합니다. `hello.txt`와 폴더는 다음 권한 실습에 사용하므로 남깁니다.
 
 ```bash
-cd /path/to/mission-1-1
+(
+set -e
+cd "$PROJECT_DIR"
 pwd
 ls
 ls -la
@@ -74,7 +90,12 @@ echo 'Hello Codyssey' > hello.txt
 cat hello.txt
 cp hello.txt hello-copy.txt
 mv hello-copy.txt hello-renamed.txt
+ls -l hello-renamed.txt
+test ! -e hello-copy.txt
+rm -- hello-renamed.txt
+test ! -e hello-renamed.txt
 cd ..
+)
 ```
 
 - 절대경로: `/path/to/mission-1-1`처럼 `/`에서 시작합니다.
@@ -118,6 +139,41 @@ ls -l
 ![추가 검증 디렉터리의 ls -la에서 파일이 없는 상태 확인](evidence/cli-rm-deleted-file-confirmed.png)
 
 `ls -la` 결과에는 `.`과 `..`만 있습니다. 해당 시점의 파일 부재를 확인하지만 이미지 자체에 `rm` 입력·삭제 대상·확인 응답은 없습니다. 위 이름 존재 화면과 함께 참고할 수 있으나 촬영 사이의 모든 동작을 추정하지 않습니다.
+
+### 2026-11-07 mv·rm 직접 실행 추가 검증
+
+**수행 시각: 2026-11-07 10:25:38 KST**(로그 UTC: `2026-11-07T01:25:38Z`). 기존 실습·PNG와 별도로 새 파일 `source.txt`를 생성하여 수행했습니다. 위 결과 이미지를 이 로그와 하나의 연속 실행으로 해석하지 않습니다.
+
+[명령·실제 출력·종료 코드를 포함한 원본 로그](evidence/linux-cli-mv-rm-execution-log.txt)를 바이트 변경 없이 복사했습니다. 전체 12개 명령의 종료 코드가 모두 `0`입니다. 아래는 원본에서 그대로 발췌한 명령과 출력이며, 출력 없는 `test`는 `[exit=0]`으로 조건의 성공을 확인합니다.
+
+```text
+$ mv -n -- source.txt renamed.txt
+[exit=0] 성공
+
+$ test \! -e source.txt
+[exit=0] 성공
+
+$ test -f renamed.txt
+[exit=0] 성공
+
+$ ls -1 -- renamed.txt
+renamed.txt
+[exit=0] 성공
+
+$ cat -- renamed.txt
+CLI rename and removal verification
+[exit=0] 성공
+
+$ rm -- renamed.txt
+[exit=0] 성공
+
+$ test \! -e renamed.txt
+[exit=0] 성공
+```
+
+`mv -n` 이후 원래 이름의 부재와 새 이름의 일반 파일 존재, 목록·내용을 확인했습니다. `rm` 이후에는 새 이름의 부재를 확인했습니다. 원본 로그 마지막 단계는 두 이름 모두 존재하지 않음을 확인하고 `최종 판정: 모든 단계 성공`을 기록합니다. 기존 PNG의 명령 누락은 이미지 자체의 한계로 유지하고, 직접 입력·결과 근거는 이 별도 TXT로 보완합니다. 공개 로그에는 작업 위치·호스트명·계정 식별정보를 기록하지 않았습니다.
+
+원본/제출본 SHA-256: `c8b3bf831748078e82753dcd1c4d549dcf58288424557cdd9427d779d5af9d0b`.
 
 ## 2. 파일·디렉터리 권한
 
@@ -180,7 +236,7 @@ chmod 755 . && stat -c '%a %A %n' .
 
 파일의 `644→600→644` 상태를 기존 이미지와 아래 실제 출력으로 확인했습니다. 별도 `permission-demo` 디렉터리의 `755→700→755`는 새 화면에 각 명령과 결과가 함께 있어 검증을 완료했습니다. 기존 `directory-permission-755-stat.png`는 실습 폴더 자체의 755 상태이며 새 디렉터리와 대상을 구분합니다.
 
-![파일 644 목록 출력: 소유자·그룹 식별정보 마스킹 검토 필요](<evidence/codyssey-permissions-evidence/file-permission-644-list.png>)
+![파일 644 목록 출력: 소유자·그룹 식별정보 마스킹](<evidence/codyssey-permissions-evidence/file-permission-644-list.png>)
 
 ![파일 권한 600 변경 명령](<evidence/codyssey-permissions-evidence/file-chmod-600-command.png>)
 
@@ -273,6 +329,13 @@ Ubuntu에서 Bash가 주 프로세스인 경우 `exit`로 Bash를 끝내면 컨�
 
 ![docker stop codyssey-stop-evidence 입력과 컨테이너 이름 반환 출력](evidence/docker-stop-success-output.png)
 
+위 이미지에서 직접 읽은 명령과 반환 출력입니다. 이번 문서 정리에서 다시 실행하지 않았습니다.
+
+```text
+$ docker stop codyssey-stop-evidence
+codyssey-stop-evidence
+```
+
 별도 컨테이너 `codyssey-stop-evidence`에 대한 `docker stop` 입력과 같은 컨테이너 이름의 반환 출력을 확인했습니다. 기존 `codyssey-stop-test`의 history·종료 상태와는 다른 추가 검증이며, 이전 화면의 누락된 반환 출력으로 위장하지 않습니다. 공식 요구사항의 중지 명령·출력 기록을 이 화면으로 보완합니다. 이 이미지에 중지 전후 `docker ps` 목록까지 표시되어 있다고 주장하지 않습니다.
 
 ## 4. Dockerfile 기반 Nginx 웹 서버와 포트 매핑
@@ -288,7 +351,7 @@ EXPOSE 80
 HTML에는 `Codyssey Docker Web Server` 제목과 `Dockerfile로 만든 첫 번째 웹 서버입니다.` 설명이 있습니다. `.dockerignore`는 HTML만 빌드 컨텍스트에 포함하도록 설정되어 있습니다.
 
 ```bash
-cd /path/to/mission-1-1
+cd "$PROJECT_DIR"
 docker build -t codyssey-web:1.0 ./web-server
 docker run -d --name codyssey-web -p 127.0.0.1:8080:80 codyssey-web:1.0
 docker ps
@@ -345,12 +408,20 @@ nano에서 직접 작성한 내용, 빌드 `FINISHED`, 컨테이너 ID 반환 �
 
 ![HTTP 200과 실제 HTML 응답](<evidence/codyssey-dockerfile-evidence/dockerfile-manual-http-200.png>)
 
+위 HTTP 이미지의 실제 명령과 응답 상태 행만 발췌했습니다. 전체 헤더·본문은 이미지에서 확인합니다.
+
+```text
+$ curl -i http://localhost:8081
+HTTP/1.1 200 OK
+```
+
+
 ## 5. Bind Mount 변경 전후 확인
 
 `bind-mount/shared.txt` 파일의 존재는 확인했습니다. 아래 예시는 기존 파일을 덮어쓰지 않도록 별도의 `replay.txt`를 사용합니다. 해당 파일이 이미 있으면 다른 이름을 정합니다.
 
 ```bash
-cd /path/to/mission-1-1
+cd "$PROJECT_DIR"
 printf 'before\n' > bind-mount/replay.txt
 docker run -d --name codyssey-bind --mount type=bind,source="$(pwd)/bind-mount",target=/data,readonly ubuntu:24.04 sleep infinity
 cat bind-mount/replay.txt
@@ -457,7 +528,7 @@ docker run -d --name codyssey-web-server -p 8080:80 codyssey-web:v1
 기본 브랜치는 사용자 제공 정보에 따라 `main`을 기준으로 설명합니다. 기존 저장소이므로 `git init`을 다시 실행하지 않습니다. 다음은 사용자가 직접 실행할 명령어입니다.
 
 ```bash
-cd /path/to/mission-1-1
+cd "$PROJECT_DIR"
 git status
 git branch --show-current
 git config --get user.name
@@ -505,13 +576,13 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 
 ![병합 커밋 e4361d0 및 GitHub main push 성공](evidence/git-merge-and-push-confirmed.png)
 
-**추가 증빙 필요:** GitHub 브라우저에서 저장소 파일 목록과 README가 표시되는 화면은 아직 포함되어 있지 않습니다.
+**원격 제출 확인:** 이번 README·새 TXT는 아직 커밋·업로드하지 않았습니다. 사용자가 최종 반영한 뒤 제출 URL에서 문서와 증빙 접근을 확인합니다. 별도의 GitHub 파일 목록 스크린샷 부재만으로 공식 필수 미완료라고 판단하지 않습니다.
 
 ### 추가 Git 설정 및 개인정보 확인
 
 기존 Git 설정 화면에서 사용자 이름, 기본 브랜치 `main`, 제출 저장소의 원격 URL 및 추적 설정을 확인했습니다. 새 `git-config-list-evidence.png`에는 `git config --list` 입력과 결과가 함께 보이며 `init.defaultbranch=main`, `branch.main.remote=origin`, `branch.main.merge=refs/heads/main`을 확인했습니다. 사용자 이름·이메일·원격 URL 값 일부는 회색 사각형으로 가려져 있어 숨겨진 값을 추정하지 않습니다. 원격 주소는 기존 `git-configuration-verified.png`와 제출 URL로 확인합니다. 새 계정 메뉴 화면에는 `(GitHub)`와 `로그아웃`이 보여 VS Code의 GitHub 로그인 상태를 확인했습니다. 계정명은 가려져 있으므로 특정 계정명 자체를 판독했다고 주장하지 않습니다. Git은 로컬 변경 이력을 관리하고, GitHub는 원격 저장소 공유·협업을 제공합니다.
 
-기존 이미지에는 사용자명·호스트명·사용자 경로가 보입니다. Git push 화면에는 공개 제출 저장소의 GitHub 계정명도 포함됩니다. `vscode-github-login-confirmed.png`에는 이메일 값 일부가 보입니다. 전체 주소나 noreply 여부는 잘린 화면으로 확정하지 않습니다. 공개 저장소 주소는 결과 링크로 유지하되 불필요한 개인 식별정보는 마스킹 검토 대상입니다. 비밀번호·토큰·개인키·인증 코드는 공개하면 안 됩니다. 원본 이미지는 이번 정리에서 수정하지 않았습니다.
+공개용 이미지는 기존 마스킹 상태를 유지합니다. 가려진 사용자명·호스트명·이메일 값은 복원하거나 추정하지 않습니다. 제출에 필요한 공개 GitHub 계정명·저장소 URL은 유지합니다. 이번 작업에서는 PNG를 수정하지 않았으며, 새 TXT와 README의 추가 내용에서 인증 비밀정보를 점검합니다. 원본 이미지는 저장소 밖 비공개 보관 대상입니다.
 
 ![Git 사용자 이름·기본 브랜치·원격·추적 설정 실제 출력](<evidence/git-configuration-verified.png>)
 
@@ -541,7 +612,7 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 - [x] 실행 환경 및 Docker CLI·서버 버전 실제 출력 연결
 - [x] CLI 위치·목록·내용 조회 실제 결과 연결
 - [x] 추가 touch 명령 및 0바이트 출력 확인
-- [ ] CLI 복사·이름 변경·삭제의 직접 실행 결과는 기존 이력과 별도 결과 화면의 한계 구분
+- [x] CLI 생성·복사 기록과 실제 파일/출력 연결, 별도 mv·rm 직접 실행·후속 존재/부재 확인·종료 코드 로그 연결
 - [x] 파일 644·600·644 및 디렉터리 755·700·755 변경 증거 연결
 - [x] hello-world 및 Ubuntu 대화형·재시작 증거 연결
 - [x] Docker 이미지·컨테이너 목록·로그·리소스 출력 연결
@@ -553,7 +624,7 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 - [x] PNG 51개를 각각 한 번씩 연결하고 상대경로 확인
 - [x] Git 기본 브랜치·사용자 이름·원격·추적 설정 증거 연결
 - [x] git config --list 결과 및 VS Code GitHub 로그인·저장소 연동 증거 연결
-- [ ] 불필요한 개인 식별정보 마스킹·공개 전 검토
+- [x] 기존 PNG 마스킹 유지 및 새 공개 TXT·README의 식별정보·인증 비밀정보 점검(검토 범위 내)
 - [ ] 최종 커밋·업로드 후 GitHub에서 전체 문서·파일 접근 확인
 
 ### 공개 전 보안 검토
@@ -584,7 +655,7 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 | 제출 URL·프로젝트 개요·결과 링크 | 완료 | 제출 URL, 프로젝트 목적, 실습별 이미지·문서 링크 |
 | 실행 환경 OS·Shell·터미널·Docker·Git | 완료 | 환경 이미지의 실제 버전과 VS Code 통합 터미널 화면 |
 | 체크리스트·재현 절차·기술 설명 | 완료 | 경로 대체 안내, 명령 코드블록, 권한·포트·볼륨·Git 역할 설명 |
-| CLI 생성·빈 파일·복사·이동·삭제 | 부분 충족 | 추가 touch·0바이트 확인 완료. 복사·mv·rm의 이력과 결과는 있으나 전체 연속 실행을 직접 입증하지 않음 |
+| CLI 생성·빈 파일·복사·이동·삭제 | 완료(자료 결합) | 기존 CLI 명령 이력·조회 결과·실습 파일, touch·0바이트 화면 및 2026-11-07 별도 mv·rm 원본 로그의 명령·후속 확인·각 exit=0. 서로 다른 실습을 하나의 연속 실행으로 주장하지 않음 |
 | 파일·디렉터리 권한 변경 전후 | 완료 | 파일 644·600·644 및 디렉터리 755·700·755 실제 결과 |
 | Docker 버전·정상 서버 점검 | 완료 | CLI·서버 버전 실제 출력 및 기존 Docker 정보 |
 | 이미지 다운로드·목록·컨테이너 실행·목록·로그·리소스 | 완료 | 기존 pull·run, 새 images·ps·logs·stats 출력 |
@@ -599,4 +670,4 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 | 트러블슈팅 2건 | 완료 | 문제·원인 확인·해결/대안 기록과 관련 증거. 일부 단계는 사용자 제공 기록 |
 | 보안·개인정보 보호 | 완료(검토 범위 내) | 추가 4개 마스킹·기존 47개 유지·인증 비밀정보 미식별. 과거 원격 캐시·외부 복제본까지 제거됐다는 의미는 아님 |
 
-현재 검토에서 필수 실습의 확정적인 미수행을 뜻하는 ‘미충족’ 항목은 없습니다. 부분 충족은 문서만으로 성공을 확정할 수 없는 증거 범위입니다. 보너스 Compose·환경 변수·SSH는 필수 미완료로 계산하지 않습니다.
+현재 로컬 자료 대조에서 새 mv·rm 로그로 직접 입력·결과의 공백을 보완했습니다. 이는 공식 채점 결과나 만점을 보장하지 않습니다. 재현 안내는 정적으로 점검했으며 독립 환경에서 전체 재실행하지 않았습니다. 남은 제출 작업은 사용자의 변경 검토와 최종 반영 후 원격 접근 확인입니다. 보너스 Compose·환경 변수·SSH는 필수 미완료로 계산하지 않습니다.

@@ -1,0 +1,12 @@
+name: codyssey-m11-bonus3-ops
+
+services:
+  ops:
+    # 기존 이미지를 재사용하며 서버 포트는 공개하지 않습니다.
+    image: codyssey-m11-compose-web:bonus1
+    entrypoint: ["/bin/sh"]
+    command:
+      - "-c"
+      - |
+        echo 'CODYSSEY_COMPOSE_OPS_READY'
+        while :; do sleep 3600; done

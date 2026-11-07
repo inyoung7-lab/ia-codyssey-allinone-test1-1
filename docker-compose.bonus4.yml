@@ -1,0 +1,11 @@
+name: codyssey-m11-bonus4-env
+
+services:
+  web:
+    image: codyssey-m11-compose-web:bonus1
+    environment:
+      NGINX_PORT: "${NGINX_PORT:?NGINX_PORT is required}"
+    ports:
+      - "127.0.0.1:${NGINX_PORT}:${NGINX_PORT}"
+    volumes:
+      - ./bonus4-env/default.conf.template:/etc/nginx/templates/default.conf.template:ro

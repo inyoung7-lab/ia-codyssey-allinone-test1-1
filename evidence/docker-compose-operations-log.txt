@@ -1,0 +1,223 @@
+Docker Compose 보너스 3 실제 실행 기록
+시작 시각: 2026-11-07T11:02:17.933375+09:00
+작업 위치: 제출 저장소 루트(개인 경로 생략)
+
+$ docker ps -aq --no-trunc
+1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87
+1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792
+fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226
+7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602
+ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db
+2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21
+4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e
+b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374
+
+[exit=0]
+
+$ docker inspect 1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87" "2026-11-07T01:54:44.721824754Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {}
+
+[exit=0]
+
+$ docker inspect 1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792" "2026-11-07T01:41:12.474640847Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8090"}]}
+
+[exit=0]
+
+$ docker inspect fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226" "2026-11-07T00:57:34.507443015Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602" "2026-11-05T12:03:24.429498468Z" "sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8081"}]}
+
+[exit=0]
+
+$ docker inspect ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db" "2026-11-05T11:27:14.484505034Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21" "2026-11-05T06:26:29.882451472Z" "sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69" "running" {"80/tcp":[{"HostIp":"","HostPort":"8080"}]}
+
+[exit=0]
+
+$ docker inspect 4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e" "2026-11-05T06:10:52.18097402Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374" "2026-11-05T06:01:50.164379294Z" "sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef" "exited" {}
+
+[exit=0]
+
+$ docker network ls --no-trunc --format '{{.ID}} {{.Name}} {{.Driver}}'
+05b0f9573aade1c5b49587024d164e8b515423b274271435eeaa92f0a0859735 bridge bridge
+ea6c6480a49f1fe9b810adb05502334a56542882788897bafa43a048cb60c684 codyssey-m11-bonus1_default bridge
+96b043e38722ecac3ff0ed6233494330a5f747c17eacc30a16488b6e68c0759e host host
+789e4af894aa9fc024dc85b21c67665ed09e5f0377187843af14bfcf6a0f73a9 none null
+
+[exit=0]
+
+$ docker image ls --no-trunc --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+codyssey-m11-compose-web:bonus1 sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820
+codyssey-web:v1 sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69
+codyssey-web:manual-check sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044
+ubuntu:24.04 sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+hello-world:latest sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+
+[exit=0]
+
+$ docker network inspect codyssey-m11-bonus1_default --format '{{.Id}} {{len .Containers}}'
+ea6c6480a49f1fe9b810adb05502334a56542882788897bafa43a048cb60c684 2
+
+[exit=0]
+
+$ docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus3-ops --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus3-ops --format '{{.ID}} {{.Name}}'
+
+[exit=0]
+
+$ docker ps -a --filter 'name=^/codyssey-m11-bonus3-ops-ops-1$' --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml config --quiet
+
+[exit=0]
+
+$ docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml up --no-build --pull never --wait --wait-timeout 60
+ Network codyssey-m11-bonus3-ops_default Creating
+ Network codyssey-m11-bonus3-ops_default Creating
+ Network codyssey-m11-bonus3-ops_default Created
+ Network codyssey-m11-bonus3-ops_default Created
+ Container codyssey-m11-bonus3-ops-ops-1 Creating
+ Container codyssey-m11-bonus3-ops-ops-1 Created
+ Container codyssey-m11-bonus3-ops-ops-1 Starting
+ Container codyssey-m11-bonus3-ops-ops-1 Started
+ Container codyssey-m11-bonus3-ops-ops-1 Waiting
+ Container codyssey-m11-bonus3-ops-ops-1 Healthy
+
+[exit=0]
+
+$ docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml ps
+NAME                            IMAGE                             COMMAND                  SERVICE   CREATED        STATUS                  PORTS
+codyssey-m11-bonus3-ops-ops-1   codyssey-m11-compose-web:bonus1   "/bin/sh -c 'echo 'C…"   ops       1 second ago   Up Less than a second   80/tcp
+
+[exit=0]
+
+$ docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml logs --no-color --tail 50 ops
+ops-1  | CODYSSEY_COMPOSE_OPS_READY
+
+[exit=0]
+
+[verification] up 결과와 별도로 ps의 Up 및 logs의 시작 메시지를 각각 확인했습니다.
+
+$ docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml down
+ Container codyssey-m11-bonus3-ops-ops-1 Stopping
+ Container codyssey-m11-bonus3-ops-ops-1 Stopped
+ Container codyssey-m11-bonus3-ops-ops-1 Removing
+ Container codyssey-m11-bonus3-ops-ops-1 Removed
+ Network codyssey-m11-bonus3-ops_default Removing
+ Network codyssey-m11-bonus3-ops_default Removed
+
+[exit=0]
+
+$ docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml ps -a
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+
+[exit=0]
+
+$ docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus3-ops --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus3-ops --format '{{.ID}} {{.Name}}'
+
+[exit=0]
+
+$ docker ps -aq --no-trunc
+1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87
+1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792
+fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226
+7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602
+ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db
+2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21
+4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e
+b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374
+
+[exit=0]
+
+$ docker inspect 1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87" "2026-11-07T01:54:44.721824754Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {}
+
+[exit=0]
+
+$ docker inspect 1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792" "2026-11-07T01:41:12.474640847Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8090"}]}
+
+[exit=0]
+
+$ docker inspect fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226" "2026-11-07T00:57:34.507443015Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602" "2026-11-05T12:03:24.429498468Z" "sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8081"}]}
+
+[exit=0]
+
+$ docker inspect ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db" "2026-11-05T11:27:14.484505034Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21" "2026-11-05T06:26:29.882451472Z" "sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69" "running" {"80/tcp":[{"HostIp":"","HostPort":"8080"}]}
+
+[exit=0]
+
+$ docker inspect 4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e" "2026-11-05T06:10:52.18097402Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374" "2026-11-05T06:01:50.164379294Z" "sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef" "exited" {}
+
+[exit=0]
+
+$ docker network ls --no-trunc --format '{{.ID}} {{.Name}} {{.Driver}}'
+05b0f9573aade1c5b49587024d164e8b515423b274271435eeaa92f0a0859735 bridge bridge
+ea6c6480a49f1fe9b810adb05502334a56542882788897bafa43a048cb60c684 codyssey-m11-bonus1_default bridge
+96b043e38722ecac3ff0ed6233494330a5f747c17eacc30a16488b6e68c0759e host host
+789e4af894aa9fc024dc85b21c67665ed09e5f0377187843af14bfcf6a0f73a9 none null
+
+[exit=0]
+
+$ docker network inspect codyssey-m11-bonus1_default --format '{{.Id}} {{len .Containers}}'
+ea6c6480a49f1fe9b810adb05502334a56542882788897bafa43a048cb60c684 2
+
+[exit=0]
+
+$ docker image ls --no-trunc --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+codyssey-m11-compose-web:bonus1 sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820
+codyssey-web:manual-check sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044
+codyssey-web:v1 sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69
+ubuntu:24.04 sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+hello-world:latest sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+
+[exit=0]
+
+[verification] 임시 프로젝트 컨테이너·네트워크 조회 결과 없음.
+[verification] 기존 모든 컨테이너 ID·시작 시각·이미지·상태·포트 동일.
+[verification] 기존 네트워크 ID·이름·드라이버 및 보너스 1·2 네트워크 ID·연결 수 유지.
+[verification] 기존 이미지 태그·ID 목록 동일.
+최종 판정: 실제 실행·정리·보존 검증 성공

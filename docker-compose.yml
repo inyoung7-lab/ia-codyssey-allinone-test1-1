@@ -1,0 +1,10 @@
+# 기존 Dockerfile과 HTML을 그대로 재사용합니다.
+name: codyssey-m11-bonus1
+
+services:
+  web:
+    build:
+      context: ./web-server
+    image: codyssey-m11-compose-web:bonus1
+    ports:
+      - "127.0.0.1:8090:80"

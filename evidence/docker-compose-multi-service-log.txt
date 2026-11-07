@@ -1,0 +1,144 @@
+공개용 증빙 — Docker Compose 보너스 2
+아래 원본 실행 기록은 수정·마스킹·생략 없이 보존했습니다. 개인정보 검사에서 마스킹할 값은 식별하지 못했습니다.
+컨테이너 이름·이미지 ID·내부 네트워크 주소는 검증에 필요한 기술 정보로 유지했습니다.
+원본 마지막 docker top은 exit=1이며 전체 실행 성공으로 표시하지 않습니다.
+원본 뒤의 별도 보충 기록은 같은 실습에서 오류 후 이미 수행한 읽기 전용 조회입니다. 이번 문서화에서는 Docker 명령을 재실행하지 않았습니다.
+
+===== 원본 실행 기록 시작 =====
+Docker Compose ボーナス2 / 멀티 컨테이너 실제 실행 기록
+시작 시각: 2026-11-07T10:54:44.015321+09:00
+작업 위치: 제출 저장소 루트(개인 경로 생략)
+
+$ docker inspect codyssey-m11-bonus1-web-1 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792" "2026-11-07T01:41:12.474640847Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8090"}]}
+
+[exit=0]
+
+$ docker image ls --no-trunc --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+codyssey-m11-compose-web:bonus1 sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820
+codyssey-web:manual-check sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044
+codyssey-web:v1 sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69
+ubuntu:24.04 sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+hello-world:latest sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+
+[exit=0]
+
+$ docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus1 --filter label=com.docker.compose.service=probe --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker ps -a --filter 'name=^/codyssey-m11-bonus1-probe-1$' --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker compose -f docker-compose.yml -f docker-compose.bonus2.yml config --quiet
+
+[exit=0]
+
+$ docker compose -f docker-compose.yml -f docker-compose.bonus2.yml up --no-deps --no-build --pull never --wait --wait-timeout 60 probe
+ Container codyssey-m11-bonus1-probe-1 Creating
+ Container codyssey-m11-bonus1-probe-1 Created
+ Container codyssey-m11-bonus1-probe-1 Starting
+ Container codyssey-m11-bonus1-probe-1 Started
+ Container codyssey-m11-bonus1-probe-1 Waiting
+ Container codyssey-m11-bonus1-probe-1 Healthy
+
+[exit=0]
+
+$ docker compose -f docker-compose.yml -f docker-compose.bonus2.yml ps
+NAME                          IMAGE                             COMMAND                  SERVICE   CREATED          STATUS                  PORTS
+codyssey-m11-bonus1-probe-1   codyssey-m11-compose-web:bonus1   "/bin/sh -c 'while :…"   probe     1 second ago     Up Less than a second   80/tcp
+codyssey-m11-bonus1-web-1     codyssey-m11-compose-web:bonus1   "/docker-entrypoint.…"   web       13 minutes ago   Up 13 minutes           127.0.0.1:8090->80/tcp
+
+[exit=0]
+
+$ docker inspect codyssey-m11-bonus1-web-1 --format '{{range $name, $network := .NetworkSettings.Networks}}{{$name}} {{json $network.Aliases}}{{println}}{{end}}'
+codyssey-m11-bonus1_default ["codyssey-m11-bonus1-web-1","web"]
+
+
+[exit=0]
+
+$ docker inspect codyssey-m11-bonus1-probe-1 --format '{{range $name, $network := .NetworkSettings.Networks}}{{$name}} {{json $network.Aliases}}{{println}}{{end}}'
+codyssey-m11-bonus1_default ["codyssey-m11-bonus1-probe-1","probe"]
+
+
+[exit=0]
+
+$ docker compose -f docker-compose.yml -f docker-compose.bonus2.yml exec -T probe wget -S -T 10 -O - http://web:80/
+Connecting to web:80 (172.18.0.2:80)
+  HTTP/1.1 200 OK
+  Server: nginx/1.31.8
+  Date: Sat, 07 Nov 2026 01:54:45 GMT
+  Content-Type: text/html
+  Content-Length: 323
+  Last-Modified: Thu, 05 Nov 2026 06:16:50 GMT
+  Connection: close
+  ETag: "6aec1f52-143"
+  Accept-Ranges: bytes
+
+writing to stdout
+-                    100% |********************************|   323  0:00:00 ETA
+written to stdout
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codyssey Docker Web Server</title>
+</head>
+<body>
+    <h1>Codyssey Docker Web Server</h1>
+    <p>Dockerfile로 만든 첫 번째 웹 서버입니다.</p>
+</body>
+</html>
+
+[exit=0]
+
+$ curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8090/
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Date: Sat, 07 Nov 2026 01:54:45 GMT
+Content-Type: text/html
+Content-Length: 323
+Last-Modified: Thu, 05 Nov 2026 06:16:50 GMT
+Connection: keep-alive
+ETag: "6aec1f52-143"
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codyssey Docker Web Server</title>
+</head>
+<body>
+    <h1>Codyssey Docker Web Server</h1>
+    <p>Dockerfile로 만든 첫 번째 웹 서버입니다.</p>
+</body>
+</html>
+
+[exit=0]
+
+$ docker top codyssey-m11-bonus1-probe-1 -eo comm,args
+Error response from daemon: Couldn't find PID field in ps output
+
+[exit=1]
+
+===== 원본 실행 기록 끝 =====
+
+===== 오류 후 보충 조회: 이전 작업에서 실제 확인한 결과 =====
+아래는 원본 로그 파일 밖에서 수행한 별도 조회입니다. 원본 실행과 한 연속 로그로 위장하지 않습니다.
+두 조회를 포함한 실행 묶음의 종료 코드는 0입니다. 개별 명령의 종료 코드는 따로 기록하지 않았습니다.
+
+$ docker inspect codyssey-m11-bonus1-web-1 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792" "2026-11-07T01:41:12.474640847Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8090"}]}
+
+$ docker inspect codyssey-m11-bonus1-probe-1 --format 'State={{.State.Status}} Entrypoint={{json .Config.Entrypoint}} Cmd={{json .Config.Cmd}}'
+State=running Entrypoint=["/bin/sh"] Cmd=["-c","while :; do sleep 3600; done"]
+
+[조회 묶음 exit=0; 개별 종료 코드 별도 미기록]
+
+[문서 대조] web의 오류 후 조회는 원본 실행 전 ID·시작 시각·이미지 ID·상태·포트와 일치합니다.
+[문서 대조] wget 및 curl 실제 HTML 본문은 web-server/index.html과 일치합니다.
+[판정] 두 서비스 네트워크 연결 및 HTTP 통신 성공. docker top 프로세스 조회는 실패했으며 성공으로 변경하지 않았습니다.

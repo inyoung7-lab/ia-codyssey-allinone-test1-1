@@ -633,6 +633,445 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 
 `.gitignore`는 아직 추적하지 않는 파일에 적용되며 이미 커밋된 비밀 정보를 제거하지 않습니다. `.env.example`과 `.env.sample`에는 실제 비밀값을 넣지 않습니다. 증거에는 주소창·실행 결과를 남기되 불필요한 개인정보를 가립니다.
 
+## 10. 보너스 1 — Docker Compose 단일 서비스
+
+공식 원문 5절의 “docker-compose.yml의 기본 구조를 학습하고, 단일 서비스를 Compose로 실행한다”에 해당하는 추가 실습입니다. 필수 과제와 분리하며, 멀티 컨테이너·환경 변수·SSH 또는 Compose 운영 전체 과제를 완료했다고 주장하지 않습니다.
+
+### 목적과 YAML 구조
+
+[Compose 설정](docker-compose.yml)은 기존 [Dockerfile](web-server/Dockerfile)과 [HTML](web-server/index.html)을 수정 없이 재사용합니다. 정적 콘텐츠를 제공하는 기존 Nginx를 그대로 사용하여 컨테이너 실행 설정을 파일로 관리합니다.
+
+```yaml
+# 기존 Dockerfile과 HTML을 그대로 재사용합니다.
+name: codyssey-m11-bonus1
+
+services:
+  web:
+    build:
+      context: ./web-server
+    image: codyssey-m11-compose-web:bonus1
+    ports:
+      - "127.0.0.1:8090:80"
+```
+
+- `name`: 기존 수동 컨테이너와 구분하는 프로젝트 이름입니다.
+- `services.web`: 이번에 실행하는 단일 웹 서비스입니다. 고정 `container_name` 없이 Compose가 프로젝트별 이름을 관리합니다.
+- `build.context`: 저장소 루트 기준 `web-server/`의 기존 Dockerfile로 빌드합니다.
+- `image`: 기존 실습 태그와 구분한 `codyssey-m11-compose-web:bonus1`을 사용합니다.
+- `ports`: 호스트 루프백 `8090`을 컨테이너 `80`에 연결합니다. `EXPOSE`만으로 호스트에 공개되지 않으므로 이 연결이 필요합니다.
+
+### 실행과 실제 결과
+
+**실행 시작 시각: 2026-11-07 10:41:01 KST**, Docker Compose `v5.6.1`. 실행 직전 Docker 포트 목록과 WSL 대기 포트를 확인하고 `127.0.0.1:8090` 바인딩 가능 여부를 검사했습니다. 기존 `8080`·`8081` 서비스는 유지했습니다. Windows 전체 포트 점유를 별도로 검사했다고 주장하지 않습니다.
+
+아래는 실제 실행한 명령입니다. 각 명령의 전체 출력과 종료 코드는 [공개용 실행 로그](evidence/docker-compose-single-service-log.txt)에 있습니다.
+
+```bash
+docker compose -f docker-compose.yml config --quiet
+docker compose -f docker-compose.yml up --build --wait --wait-timeout 60
+docker compose -f docker-compose.yml ps
+docker compose -f docker-compose.yml port web 80
+curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8090/
+```
+
+위 5개 명령은 모두 종료 코드 `0`입니다. YAML 검증은 출력 없이 성공했고, 빌드·서비스 실행 및 실행 상태를 확인했습니다. `port web 80`의 실제 출력:
+
+```text
+127.0.0.1:8090
+```
+
+curl 응답의 상태 행과 HTML 본문 일부를 발췌했습니다. 아래 두 코드블록 사이의 응답 헤더·나머지 HTML은 생략했으며 전체 내용은 공개 로그에 보존했습니다.
+
+```text
+HTTP/1.1 200 OK
+```
+
+```html
+<h1>Codyssey Docker Web Server</h1>
+<p>Dockerfile로 만든 첫 번째 웹 서버입니다.</p>
+```
+
+실행 당시 응답 본문 전체가 `web-server/index.html`과 일치함을 확인했습니다. 기존 컨테이너의 ID·이름·이미지·상태·포트와 기존 이미지 태그·ID도 유지했습니다. 검증 후 새 Compose 서비스를 중지하거나 삭제하지 않았습니다. 이번 문서 정리에서는 실습을 재실행하지 않았습니다.
+
+### 재현 방법과 증빙 보호
+
+앞의 clone 안내대로 저장소 루트로 이동한 뒤 위 명령을 순서대로 실행합니다. Docker Desktop과 WSL 통합, `docker compose` 및 `curl`이 필요합니다. 실행 전 아래 읽기 전용 명령으로 프로젝트·포트 사용 상태를 확인합니다.
+
+```bash
+docker compose ls --format json
+docker ps -a --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'
+ss -ltn 'sport = :8090'
+```
+
+`8090` 또는 같은 프로젝트가 이미 사용 중이면 즉시 중단하고 기존 자원을 삭제·재생성하지 않습니다. 이미 실행 중인 이번 실습에 `up`을 다시 수행하는 것은 최초 실행과 구분합니다. 문서와 파일을 대조했으며 독립 환경에서 전체 재현을 검증했다고 주장하지 않습니다.
+
+공개 로그는 실제 실행 기록의 파생본입니다. 컨테이너 목록의 `Labels`에는 개인 홈 경로·사용자 식별정보·이메일 형태 메타데이터가 있어 필드 전체를 명시적으로 마스킹했습니다. 나머지 실행 출력과 모든 명령·종료 코드는 유지했습니다. 원본은 저장소 밖에 비공개로 보존하며 공개 파일에 포함하지 않습니다. 새 스크린샷을 만들지 않았고 기존 PNG 51개와 링크는 유지했습니다.
+
+공개 로그 SHA-256: `2647987e50ea66e31ac9f64b099e0079fb8d7603dc913a121f569f62a9432ea2`.
+
+- [x] 단일 서비스 Compose YAML 작성·검증
+- [x] 기존 Dockerfile 재사용 빌드·서비스 실행
+- [x] 8090 포트 매핑·HTTP 200·실제 HTML 검증
+- [x] 실제 실행 로그·종료 코드 및 README 증빙 연결
+- [ ] 이번 보너스 변경분의 최종 커밋·GitHub 반영 확인
+
+## 11. 보너스 2 — 멀티 컨테이너와 서비스 이름 통신
+
+공식 원문 5절의 웹 서버와 보조 서비스 2개 이상 실행 및 컨테이너 간 네트워크 통신을 검증한 추가 실습입니다. 보너스 1의 단일 서비스 설정과 증빙은 그대로 보존합니다.
+
+### 구성과 목적
+
+[기본 YAML](docker-compose.yml)의 `web`과 [추가 YAML](docker-compose.bonus2.yml)의 `probe`를 같은 프로젝트로 실행합니다. `probe`는 기존 이미지의 `wget`을 재사용하는 HTTP 점검용 보조 서비스입니다.
+
+```yaml
+services:
+  probe:
+    # 기존 이미지의 wget을 HTTP 점검에 재사용합니다.
+    image: codyssey-m11-compose-web:bonus1
+    entrypoint: ["/bin/sh"]
+    command: ["-c", "while :; do sleep 3600; done"]
+```
+
+`entrypoint`를 `/bin/sh`로 바꾸고 대기 루프를 실행하므로 `probe`는 Nginx 서버 프로세스를 시작하지 않습니다. 이미지에 Nginx가 포함된 것과 서버 프로세스 실행은 구분합니다. 이 설명은 YAML과 오류 후 `Entrypoint`·`Cmd` 조회에 근거하며, 실패한 프로세스 목록 조회로 확인했다고 주장하지 않습니다.
+
+두 서비스는 `codyssey-m11-bonus1_default`에 연결됩니다. `probe`에서 `http://web:80/`로 요청하면 Compose 서비스 이름 `web`이 컨테이너 내부 주소로 해석됩니다. 이는 호스트 포트 `8090`을 거치는 요청과 다릅니다. `probe`는 호스트 포트나 Docker 소켓을 연결하지 않습니다. `ps`의 `80/tcp` 표시는 이미지의 포트 메타데이터이며 `probe`의 호스트 포트 공개를 의미하지 않습니다.
+
+### 실제 실행 결과
+
+원본 로그 시작 시각은 **2026-11-07 10:54:44 KST**입니다. [공개 실행 로그](evidence/docker-compose-multi-service-log.txt)는 실제 명령·출력·종료 코드를 보존하며, 원본 파일 밖에서 이미 수행한 오류 후 조회는 별도 보충 기록으로 구분했습니다. 이번 문서화에서는 Docker 명령을 실행하지 않았습니다.
+
+| 검증 | 실제 확인 내용 |
+| --- | --- |
+| 충돌 확인 | 같은 프로젝트의 probe 서비스와 예정 컨테이너 이름 조회 결과 없음, 각 종료 코드 0 |
+| 병합 YAML | `config --quiet` 종료 코드 0 |
+| probe 추가 | `--no-deps --no-build --pull never`로 실행, 종료 코드 0 |
+| 실행 상태 | `ps`에 web·probe 모두 Up |
+| 네트워크 | 두 컨테이너의 네트워크 이름이 동일, 별칭 web·probe 확인 |
+| 내부 HTTP | probe의 `wget http://web:80/` 요청 HTTP 200, 종료 코드 0 |
+| 호스트 HTTP | `localhost:8090` curl HTTP 200, 종료 코드 0 |
+| HTML | 두 응답 본문이 기존 `web-server/index.html` 전체와 일치 |
+| 기존 web 보존 | 실행 전 원본 기록과 오류 후 별도 조회의 ID·시작 시각·이미지 ID·상태·포트 동일 |
+
+네트워크 조회 결과 발췌:
+
+```text
+codyssey-m11-bonus1_default ["codyssey-m11-bonus1-web-1","web"]
+codyssey-m11-bonus1_default ["codyssey-m11-bonus1-probe-1","probe"]
+```
+
+내부 HTTP 출력 일부입니다. 중간 헤더와 나머지 HTML은 여기서 생략하고 전체 로그에 보존했습니다.
+
+```text
+Connecting to web:80 (172.18.0.2:80)
+  HTTP/1.1 200 OK
+```
+
+```html
+<h1>Codyssey Docker Web Server</h1>
+<p>Dockerfile로 만든 첫 번째 웹 서버입니다.</p>
+```
+
+**추가 프로세스 조회 오류:** 성공한 HTTP 검증 이후 아래 명령이 실패해 당시 작업을 중단했습니다. HTTP 통신 실패가 아니며, 전체 명령이 성공했다고 표시하지 않습니다.
+
+```text
+$ docker top codyssey-m11-bonus1-probe-1 -eo comm,args
+Error response from daemon: Couldn't find PID field in ps output
+
+[exit=1]
+```
+
+오류 후에는 읽기 전용 inspect로 기존 web의 보존과 probe의 실행 설정을 확인했습니다. 해당 두 조회 묶음의 종료 코드는 0이지만 개별 종료 코드는 별도로 기록하지 않았습니다. 기존 자원을 초기화하거나 컨테이너를 재생성·재시작·삭제하지 않았습니다.
+
+### 실행·재현 방법
+
+프로젝트 루트에서 보너스 1의 `web`이 먼저 실행되어 있어야 합니다. 이 절은 기존 web을 유지하면서 probe만 추가하는 절차입니다. 새 환경에서는 먼저 10절의 환경·포트 확인 및 단일 서비스 실행을 수행합니다. 기존 probe나 이름 충돌이 있으면 중단합니다.
+
+```bash
+docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus1 --filter label=com.docker.compose.service=probe --format '{{.ID}} {{.Names}}'
+docker ps -a --filter 'name=^/codyssey-m11-bonus1-probe-1$' --format '{{.ID}} {{.Names}}'
+docker compose -f docker-compose.yml -f docker-compose.bonus2.yml config --quiet
+docker compose -f docker-compose.yml -f docker-compose.bonus2.yml up --no-deps --no-build --pull never --wait --wait-timeout 60 probe
+docker compose -f docker-compose.yml -f docker-compose.bonus2.yml ps
+docker compose -f docker-compose.yml -f docker-compose.bonus2.yml exec -T probe wget -S -T 10 -O - http://web:80/
+curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8090/
+```
+
+기본 YAML과 추가 YAML을 함께 지정하여 보조 서비스를 합칩니다. `--no-deps`는 web을 함께 변경하지 않도록 하며, `--no-build --pull never`는 기존 이미지만 사용합니다. 실행 오류가 나면 중단하고 기존 자원을 임의로 삭제하지 않습니다. 독립 환경에서 전체 재현을 새로 검증한 것은 아닙니다.
+
+### 증빙 보호와 범위
+
+공개 로그에서 개인 경로·사용자명·호스트명·이메일·인증정보를 검사했으며 마스킹할 값은 식별하지 못했습니다. 따라서 원본 실행 기록은 생략·마스킹 없이 포함했습니다. 내부 IP·컨테이너명·이미지 ID는 검증에 필요한 기술 정보로 유지했습니다. 오류 후 보충 기록은 출처와 개별 종료 코드 기록의 한계를 명시했습니다. 원본 비공개 로그는 수정하지 않았고 기존 PNG 51개·링크·보너스 1 증빙은 유지합니다.
+
+공개 로그 SHA-256: `e1eafa8ab9161ccf08667e1b2d1d93981cecfa5365219efb6951d65655e48607`.
+
+- [x] 두 서비스 실행 및 같은 Compose 네트워크 확인
+- [x] 서비스 이름 web을 통한 HTTP 200·실제 HTML 검증
+- [x] 기존 8090 접속 및 web 컨테이너 보존 확인
+- [x] 성공·실패 명령을 구분한 로그와 YAML 링크 제공
+- [ ] 이번 보너스 변경분의 최종 커밋·GitHub 반영 확인
+
+## 12. 보너스 3 — Docker Compose 운영 명령어
+
+공식 원문 5절의 `up`, `down`, `ps`, `logs`로 실행·종료·상태·로그를 관리하는 과제입니다. 기존 보너스 1·2의 실행 상태를 유지하기 위해 별도 프로젝트 `codyssey-m11-bonus3-ops`를 사용했습니다.
+
+### 독립 구성
+
+[운영 실습 YAML](docker-compose.bonus3.yml)은 기존 이미지의 셸을 재사용하며 호스트 포트·볼륨·Docker 소켓을 연결하지 않습니다. 새 이미지 다운로드나 패키지 설치 없이 시작 메시지를 출력하고 대기하는 서비스입니다.
+
+```yaml
+name: codyssey-m11-bonus3-ops
+
+services:
+  ops:
+    # 기존 이미지를 재사용하며 서버 포트는 공개하지 않습니다.
+    image: codyssey-m11-compose-web:bonus1
+    entrypoint: ["/bin/sh"]
+    command:
+      - "-c"
+      - |
+        echo 'CODYSSEY_COMPOSE_OPS_READY'
+        while :; do sleep 3600; done
+```
+
+| 명령 | 역할 |
+| --- | --- |
+| `up` | YAML에 정의한 서비스와 네트워크를 생성하고 실행합니다. |
+| `ps` | 해당 프로젝트 컨테이너의 상태와 포트를 조회합니다. |
+| `logs` | 컨테이너가 표준 출력·오류로 남긴 기록을 조회합니다. |
+| `down` | 해당 프로젝트 컨테이너를 중지·삭제하고 기본 네트워크를 정리합니다. |
+
+### 실제 실행 순서와 결과
+
+**시작 시각: 2026-11-07 11:02:17 KST**. [실제 명령·전체 출력·종료 코드 로그](evidence/docker-compose-operations-log.txt)에 사전 자원 조회, 충돌 검사, 실행·정리, 기존 자원 비교를 기록했습니다.
+
+아래 명령은 실제로 실행했으며 모두 종료 코드 `0`입니다. `up --wait`만으로 준비 완료를 판단하지 않고 `ps` 상태와 `logs` 메시지를 각각 검증했습니다. 이 서비스의 준비 확인은 셸 실행과 시작 메시지 확인이며, 웹 서버의 HTTP 준비 상태 검사가 아닙니다.
+
+```bash
+docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml config --quiet
+docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml up --no-build --pull never --wait --wait-timeout 60
+docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml ps
+docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml logs --no-color --tail 50 ops
+docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml down
+docker compose -p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml ps -a
+```
+
+| 단계 | 실제 결과 |
+| --- | --- |
+| YAML 검증 | 출력 없이 종료 코드 0 |
+| `up` | 임시 네트워크·컨테이너 생성 및 실행, 종료 코드 0 |
+| `ps` | `codyssey-m11-bonus3-ops-ops-1`의 `Up Less than a second` 상태 확인 |
+| `logs` | 아래 시작 메시지 확인, 종료 코드 0 |
+| `down` | 임시 컨테이너 Stopped·Removed, 임시 네트워크 Removed, 종료 코드 0 |
+| 정리 확인 | `ps -a`는 표 머리글만 출력, 프로젝트 라벨로 조회한 컨테이너·네트워크 목록은 비어 있음 |
+
+실제 로그 출력:
+
+```text
+ops-1  | CODYSSEY_COMPOSE_OPS_READY
+```
+
+`ps`의 `80/tcp`는 재사용 이미지의 노출 포트 메타데이터입니다. 호스트 포트 매핑이나 Nginx 서버 실행을 의미하지 않습니다.
+
+### 정리와 기존 자원 보존
+
+`down`은 `-p codyssey-m11-bonus3-ops -f docker-compose.bonus3.yml`로만 실행했습니다. `--volumes`, `--rmi`, `--remove-orphans`나 `prune`은 사용하지 않았습니다. 정리 후 실제 실행한 확인 명령:
+
+```bash
+docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus3-ops --format '{{.ID}} {{.Names}}'
+docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus3-ops --format '{{.ID}} {{.Name}}'
+```
+
+두 명령 모두 결과 목록 없이 종료 코드 `0`입니다. 실행 전후 **기존 컨테이너 8개**의 ID·시작 시각·이미지 ID·상태·포트가 동일했고, 네트워크 ID·이름·드라이버 목록 및 이미지 태그·ID 목록도 일치했습니다. 보너스 1·2의 `codyssey-m11-bonus1_default`는 같은 ID와 연결 컨테이너 수 2개를 유지했습니다. 기존 컨테이너를 재시작·재생성·삭제하지 않았습니다.
+
+### 재현 방법과 증빙 보호
+
+프로젝트 루트에서 기존 `codyssey-m11-compose-web:bonus1` 이미지가 있어야 합니다. 새 환경에서는 10절의 빌드·실행 안내를 먼저 따릅니다. 위 충돌 확인 명령의 목록이 비어 있을 때에만 YAML 검증 → `up` → `ps` → `logs` → `down` → 정리 확인 순서로 진행합니다. 서비스 상태나 시작 메시지가 확인되지 않거나 명령이 실패하면 중단하고 기존 자원을 임의로 정리하지 않습니다.
+
+이번 환경에서 위 순서를 실제 실행했지만 독립된 다른 환경에서 전체 재현을 검증한 것은 아닙니다. 실습 후 임시 서비스는 실행 중이지 않으며 YAML·로그가 제출 증빙으로 남습니다.
+
+공개 로그는 필요한 상태 필드만 수집했습니다. 개인 경로·사용자명·호스트명·이메일·인증정보를 검사했으며 마스킹할 값은 식별하지 못해 원본 실행 로그를 변경·생략 없이 보존했습니다. 기존 PNG 51개와 보너스 1·2의 YAML·로그·README 내용은 유지합니다.
+
+공개 로그 SHA-256: `c1288bc4a8ebddb3cdd817749baaf485c323b246f14c0715a14232e5b3b7e59c`.
+
+- [x] 독립 프로젝트 YAML 검증 및 up·ps·logs·down 실행
+- [x] 실제 시작 메시지와 각 종료 코드 확인
+- [x] 임시 컨테이너·네트워크 제거 확인
+- [x] 기존 컨테이너·네트워크·이미지 보존 비교
+- [x] 실제 로그와 YAML 상대경로 링크 연결
+- [ ] 이번 보너스 변경분의 최종 커밋·GitHub 반영 확인
+
+## 13. 보너스 4 — 환경 변수로 Nginx 수신 포트 변경
+
+공식 원문 5절의 “Dockerfile 또는 Compose에서 환경 변수를 주입해 서버 포트/모드를 바꿔본다”를 독립 프로젝트 `codyssey-m11-bonus4-env`에서 검증했습니다. 기존 이미지와 HTML을 재사용하고 실제 Nginx 수신 포트를 `8091 → 8092`로 바꿨습니다.
+
+### 설정과 코드의 분리
+
+- [Compose YAML](docker-compose.bonus4.yml): `${NGINX_PORT}`를 호스트·컨테이너 포트와 `environment` 값에 적용합니다.
+- [Nginx 템플릿](bonus4-env/default.conf.template): `listen ${NGINX_PORT};`를 실제 Nginx 설정으로 변환할 원본입니다. 읽기 전용으로 연결합니다.
+- [공개 환경 변수 예시](bonus4-env/.env.example): 비밀정보 없는 `NGINX_PORT=8091`만 포함합니다.
+- 로컬 `bonus4-env/.env`: 예시와 같은 값을 담는 실행 설정이며 Git 제외 대상입니다. 공개 링크하지 않습니다.
+- [실제 명령·출력·종료 코드 로그](evidence/docker-compose-environment-log.txt)
+
+같은 HTML과 이미지 코드를 그대로 두고 환경 변수라는 외부 설정으로 동작을 바꿉니다. `--env-file`은 Compose의 변수 치환 입력이며, 컨테이너 내부에는 YAML의 `environment`를 통해 명시적으로 전달됩니다. 두 단계는 서로 다릅니다.
+
+기존 이미지와 동일한 이미지 ID의 실행 컨테이너에서 `/docker-entrypoint.sh`, 실행 가능한 `/docker-entrypoint.d/20-envsubst-on-templates.sh` 및 `envsubst`를 실제 확인했습니다. 기본 시작 스크립트가 템플릿을 처리하므로 별도 패키지 설치나 기존 Dockerfile 수정은 필요하지 않았습니다.
+
+### 실제 검증 결과
+
+실행 시작 시각: **2026-11-07T11:08:47.683660+09:00**. YAML 검증·실행·조회·HTTP·정리 명령은 모두 실제 실행했고 종료 코드는 공개 로그에 있습니다.
+
+| 확인 항목 | 첫 실행 | 환경 변수 덮어쓰기 후 |
+| --- | --- | --- |
+| 입력 | `.env`의 `NGINX_PORT=8091` | 셸의 `NGINX_PORT=8092` |
+| 컨테이너 환경 변수 | `8091` | `8092` |
+| 실제 Nginx 설정 | `listen 8091;` | `listen 8092;` |
+| 포트 매핑 | `127.0.0.1:8091 → 8091` | `127.0.0.1:8092 → 8092` |
+| HTTP | `HTTP/1.1 200 OK` | `HTTP/1.1 200 OK` |
+| 응답 본문 | 기존 HTML 전체 일치 | 기존 HTML 전체 일치 |
+
+8092 단계에서는 이번 프로젝트의 컨테이너 ID가 변경되었고 이전 8091 Docker 매핑은 없어졌습니다. `.env` 파일 자체는 8091 그대로 유지하면서 셸 환경 변수가 치환 값을 덮어쓴 것입니다. 호스트 포트만 바꾼 것이 아니라 실제 Nginx `listen` 값도 확인했습니다.
+
+### 재현 순서
+
+저장소 루트에서 진행합니다. 기존 이미지가 없는 새 환경에서는 10절에 따라 이미지를 먼저 준비합니다. 같은 프로젝트·컨테이너 이름이 있거나 8091·8092가 점유되면 중단합니다. 기존 자원은 삭제하지 않습니다.
+
+```bash
+docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Names}}'
+docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Name}}'
+ss -ltn 'sport = :8091 or sport = :8092'
+# 신규 로컬 .env가 없는 경우에만 복사합니다. 기존 파일은 덮어쓰지 않습니다.
+cp -n bonus4-env/.env.example bonus4-env/.env
+```
+
+실제 실습에서는 `.env`를 예시와 동일한 내용으로 새로 작성했습니다. 위 복사는 새 환경의 재현 안내이며 당시 실행한 명령으로 주장하지 않습니다. 셸에 기존 `NGINX_PORT`가 설정되어 있으면 첫 단계 값에 영향을 주므로 먼저 확인하고, 첫 단계에서는 해당 셸 변수가 없는 환경을 사용합니다. 실습 기록의 첫 단계 명령은 `NGINX_PORT`를 상속하지 않는 환경에서 실행했습니다.
+
+```bash
+docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml config --quiet
+docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml up --no-build --pull never --wait --wait-timeout 60
+docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml ps
+docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web printenv NGINX_PORT
+docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web cat /etc/nginx/conf.d/default.conf
+docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml port web 8091
+curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8091/
+```
+
+두 번째 단계에서는 셸 변수로 덮어씁니다. 이 프로젝트 컨테이너만 재생성됩니다.
+
+```bash
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml config --quiet
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml up --no-build --pull never --wait --wait-timeout 60
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml ps
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web printenv NGINX_PORT
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web cat /etc/nginx/conf.d/default.conf
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml port web 8092
+curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8092/
+```
+
+### 정리와 보안
+
+모든 검증 성공 후에만 다음 명령으로 이 프로젝트를 정리했습니다.
+
+```bash
+NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml down
+docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Names}}'
+docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Name}}'
+```
+
+정리 후 컨테이너·네트워크 조회 결과는 비어 있습니다. 기존 컨테이너 8개의 ID·시작 시각·이미지·상태·포트와 네트워크·이미지 목록은 실행 전후 동일했습니다. 기존 보너스 1·2 네트워크도 유지됐고 기존 PNG 51개·Dockerfile·HTML·보너스 1~3 자료는 보존했습니다.
+
+`.gitignore`의 `.env` 제외와 `!.env.example` 허용 규칙을 확인했습니다. 공개 변수는 숫자 포트뿐이며 전체 환경 변수나 컨테이너 Labels를 수집하지 않았습니다. 공개 로그의 개인 경로·계정 식별정보·이메일·인증정보 검사에서 마스킹할 값은 식별하지 못해 출력 생략 없이 원본을 보존했습니다. 스크립트 안의 환경 변수 이름이나 파일 경로는 설정 기능 설명이며 비밀값이 아닙니다.
+
+공개 로그 SHA-256: `a9ea2a4eba96f89dee2ef2fa6ea87a9d37721030ae9f7979ed255a56dd472d91`.
+
+이번 환경에서 실제 실행한 결과이며 독립된 다른 환경에서 전체 재현을 검증했다고 주장하지 않습니다. 오류 시 임의 복구나 자원 삭제 없이 중단해야 합니다.
+
+- [x] 공식 템플릿 처리 기능과 환경 변수 전달 확인
+- [x] 실제 수신 포트 8091·8092 및 HTTP 200·HTML 일치 확인
+- [x] 이전 매핑 제거와 보너스 4 임시 자원 정리 확인
+- [x] 기존 자원 보존 및 공개 로그·상대경로 링크 검증
+- [ ] 보너스 변경분의 최종 커밋·GitHub 반영 확인
+
+## 14. 보너스 5 — GitHub SSH 키 설정
+
+공식 기준은 [미션 원문](mission-requirements.md) 5절의 “HTTPS 대신 SSH로 푸시가 가능하도록 키를 등록하고 동작을 확인한다”입니다. [출처를 구분한 공개 검증 기록](evidence/github-ssh-verification-log.txt)에 사용자 터미널의 결과와 Codex의 기존 직접 확인·실패 기록을 분리했습니다. 이번 문서화에서 인증이나 Push를 다시 수행하지 않았습니다.
+
+### 키 생성·등록 과정과 보호
+
+미션 전용 Ed25519 키 `~/.ssh/id_ed25519_codyssey`와 공개키 `.pub`를 사용했습니다. 생성 명령에는 공개 가능한 주석 `codyssey-mission-1-1`을 지정하고, 암호문은 사용자 터미널에서 직접 입력하도록 안내했습니다. 개인키 내용이나 암호문은 문서·로그에 기록하지 않았습니다. 아래는 재현 안내이며 실행 원문 로그의 대체 자료가 아닙니다.
+
+```bash
+# 새 키를 만들 때만 사용합니다. 같은 이름의 파일이 있으면 중단합니다.
+ssh-keygen -t ed25519 -C "codyssey-mission-1-1" -f "$HOME/.ssh/id_ed25519_codyssey"
+```
+
+Codex는 기존 직접 조회에서 개인키·공개키의 존재와 권한 `600`·`644`를 확인했습니다. GitHub 등록은 사용자가 Settings → SSH and GPG keys → New SSH key에서 공개키만 Authentication Key로 등록했다고 보고했습니다. 개인키와 공개키는 구분하며 공개키 전체도 제출 문서에 넣지 않습니다. 키 파일은 저장소에 복사하지 않습니다.
+
+### 사용자 터미널에서 확인한 출력과 결과
+
+다음 표는 **사용자 제공 결과**입니다. 전체 터미널 원본·정확한 실행 시각·개별 종료 코드는 제공되지 않아 추가하지 않았습니다.
+
+| 단계 | 사용자 터미널 결과 |
+| --- | --- |
+| SSH 22번 | `Connection reset`으로 연결 실패 |
+| SSH 443번 | GitHub 계정 인증 성공 |
+| 저장소 접근 | SSH 443번 `git ls-remote` 성공 |
+| 원격 main | `bf19ba0dd960b9c360284c407b1d62a25ceb79e2` |
+| 에이전트 | 실행 및 키 등록 성공, `ssh-add -l`에서 Ed25519 키 확인 |
+| Push 사전 점검 | SSH 443번 `git push --dry-run` 성공 |
+| 실제 SSH Push | 아직 수행하지 않음 |
+
+사용자 터미널에서 확인한 dry-run 출력:
+
+```text
+Everything up-to-date
+```
+
+이는 실제 Push 성공이나 보너스 변경분 업로드 증거가 아닙니다. `Everything up-to-date`는 새 커밋을 전송했다는 의미도 아닙니다. 실제 SSH Push 증거는 추후 별도로 승인한 최종 반영 후 추가합니다.
+
+### SSH 443번 대체 연결과 재현 안내
+
+아래는 사용자 보고를 바탕으로 한 재현 안내이며 사용자가 입력한 명령 원문이라고 주장하지 않습니다. 전용 키를 명시하고 origin은 변경하지 않습니다. 최초 호스트 지문은 GitHub 공식 지문과 대조하며 검증을 우회하지 않습니다. 암호문은 사용자 터미널에만 입력합니다.
+
+```bash
+# 필요할 때 같은 사용자 셸에서 에이전트를 시작하고 키를 등록합니다.
+eval "$(ssh-agent -s)"
+ssh-add "$HOME/.ssh/id_ed25519_codyssey"
+ssh-add -l
+
+# 계정 인증: GitHub는 셸을 제공하지 않으므로 출력과 종료 코드를 함께 판단합니다.
+ssh -i "$HOME/.ssh/id_ed25519_codyssey" -o IdentitiesOnly=yes -p 443 -T git@ssh.github.com
+
+# 저장소 접근 및 Push 사전 점검: 실제 업로드하지 않습니다.
+GIT_SSH_COMMAND="ssh -i \"$HOME/.ssh/id_ed25519_codyssey\" -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p 443" git ls-remote ssh://git@ssh.github.com:443/inyoung7-lab/ia-codyssey-allinone-test1-1.git refs/heads/main
+GIT_SSH_COMMAND="ssh -i \"$HOME/.ssh/id_ed25519_codyssey\" -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p 443" git push --dry-run ssh://git@ssh.github.com:443/inyoung7-lab/ia-codyssey-allinone-test1-1.git main
+```
+
+### Codex 직접 실행 결과와 세션 차이
+
+이전 Codex 실행 환경에서는 SSH 에이전트 연결 변수가 없었고, 전용 키·443번·`BatchMode=yes`로 실행한 `git ls-remote`가 다음 오류와 종료 코드 `128`로 실패했습니다.
+
+```text
+git@ssh.github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+```
+
+당시에는 실패 후 중단하여 dry-run을 실행하지 않았습니다. 이후 사용자 WSL 터미널에서 보고한 성공 결과로 이 실패 로그를 덮어쓰지 않습니다. SSH 에이전트는 프로세스가 상속한 `SSH_AUTH_SOCK` 등 세션 환경에 따라 접근 가능 여부가 다를 수 있으며, 실패 원인을 그것만으로 확정하지 않습니다.
+
+HTTPS origin은 기존 제출 설정과 다른 실습에 영향을 주지 않기 위해 유지했습니다. SSH URL을 명령에 직접 지정해도 SSH 접근을 확인할 수 있습니다. 공개 로그의 개인 홈 경로는 `[HOME]`으로 마스킹하고 범위를 명시했습니다. 기존 PNG 51개 및 보너스 1~4 자료는 변경하지 않습니다.
+
+공개 로그 SHA-256: `95510fbe49e90d711c3ef3ddb0b0f7e283d8e230395d770730d943d72b3ca9b4`.
+
+- [x] 전용 키 존재·권한 확인, 사용자 보고상 GitHub 등록 완료
+- [x] 사용자 터미널 보고상 SSH 443 계정 인증·원격 조회·Push dry-run 성공
+- [x] Codex 직접 확인과 사용자 제공 결과 및 실패 기록 구분
+- [ ] 최종 SSH 실제 Push와 원격 반영 증빙 추가
+
+이 상태는 사용자 제공 성공 결과를 포함한 문서화이며 Codex 환경에서 전체 인증을 재현했다는 뜻이 아닙니다. 공식 평가 결과를 보장하지 않으며, 실제 Push와 보너스 변경분의 최종 원격 확인은 남아 있습니다.
+
+### 공개 로그의 줄 끝 공백 정규화
+
+보너스 1~4 공개 로그 4개는 최종 제출 검사에서 발견된 줄 끝 공백·탭만 제거했습니다(각각 12·7·16·22행, 총 57행). 이 때문에 위 SHA-256은 정규화 전 원본·파생본의 해시와 다릅니다. 명령어·출력의 의미·종료 코드·실패 기록·순서·마스킹·줄바꿈은 유지했으며 검증 결과가 변경된 것은 아닙니다. 앞 절의 원본 보존 설명은 이 줄 끝 공백 정규화 전 수집·마스킹 단계를 뜻합니다. SSH 검증 로그는 정규화하지 않았습니다.
+
 ## 개인정보 이력 정리 안내
 
 공개 전 개인정보 보호를 위해 과거 이미지 원본을 Git 이력에서 제거하고 마스킹된 증빙을 다시 등록했습니다. 기존 Git 스크린샷의 커밋 ID는 **이력 정리 전 실제 수행 기록**이며 현재 이력의 ID와 다릅니다. 화면의 명령·결과·커밋 ID는 바꾸지 않았습니다. 공개용 이미지에는 개인정보 영역에 불투명 마스킹을 적용했으며 원본은 공개 저장소 밖에 비공개로 보관합니다.
@@ -670,4 +1109,4 @@ GitHub 인증에는 비밀번호나 토큰을 저장소 URL·문서에 넣지 �
 | 트러블슈팅 2건 | 완료 | 문제·원인 확인·해결/대안 기록과 관련 증거. 일부 단계는 사용자 제공 기록 |
 | 보안·개인정보 보호 | 완료(검토 범위 내) | 추가 4개 마스킹·기존 47개 유지·인증 비밀정보 미식별. 과거 원격 캐시·외부 복제본까지 제거됐다는 의미는 아님 |
 
-현재 로컬 자료 대조에서 새 mv·rm 로그로 직접 입력·결과의 공백을 보완했습니다. 이는 공식 채점 결과나 만점을 보장하지 않습니다. 재현 안내는 정적으로 점검했으며 독립 환경에서 전체 재실행하지 않았습니다. 남은 제출 작업은 사용자의 변경 검토와 최종 반영 후 원격 접근 확인입니다. 보너스 Compose·환경 변수·SSH는 필수 미완료로 계산하지 않습니다.
+현재 로컬 자료 대조에서 새 mv·rm 로그로 직접 입력·결과의 공백을 보완했습니다. 이는 공식 채점 결과나 만점을 보장하지 않습니다. 재현 안내는 정적으로 점검했으며 독립 환경에서 전체 재실행하지 않았습니다. 남은 제출 작업은 사용자의 변경 검토와 최종 반영 후 원격 접근 확인입니다. 보너스 1 단일 서비스는 10절, 보너스 2 멀티 컨테이너 통신은 11절에서 검증했습니다. 그 밖의 보너스는 필수 미완료로 계산하지 않습니다.

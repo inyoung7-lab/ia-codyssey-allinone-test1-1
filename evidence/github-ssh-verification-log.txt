@@ -1,0 +1,66 @@
+GitHub SSH 보너스 5 — 출처를 구분한 검증 기록
+공식 기준: mission-requirements.md 5절, 165~167행
+“HTTPS 대신 SSH로 푸시가 가능하도록 키를 등록하고 동작을 확인한다.”
+
+이 파일은 사용자 보고와 Codex의 기존 직접 실행 기록을 정리한 문서입니다.
+사용자 터미널의 전체 원본 로그를 수집한 파일은 아닙니다.
+이번 문서화에서는 SSH 인증·Git 원격 조회·Push/dry-run 명령을 새로 실행하지 않았습니다.
+사용자 제공 결과의 개별 종료 코드와 정확한 실행 시각은 제공되지 않았으므로 만들지 않았습니다.
+
+[1] 사용자 터미널에서 확인한 출력 및 수행 결과 — 사용자 제공
+- 미션 전용 Ed25519 키 생성 및 공개키 GitHub 등록 완료.
+- 개인키 권한 600, 공개키 권한 644.
+- SSH 22번 연결 실패. 제공된 오류 문구:
+Connection reset
+- SSH 443번 GitHub 계정 인증 성공. 전체 인증 배너는 제공되지 않아 재구성하지 않음.
+- SSH 443번 git ls-remote 성공. 사용자가 제공한 원격 main 커밋:
+bf19ba0dd960b9c360284c407b1d62a25ceb79e2
+- SSH 에이전트 시작 및 개인키 등록 성공.
+- ssh-add -l에서 Ed25519 키 확인. 원문·지문·키 주석은 제공되지 않아 추가하지 않음.
+- SSH 443번 git push --dry-run 성공. 사용자 터미널에서 확인한 출력:
+Everything up-to-date
+- 이 dry-run은 실제 Push가 아님. 사용자 보고상 실제 SSH Push는 아직 수행하지 않음.
+- origin은 기존 HTTPS 주소 유지.
+- 위 수행 항목의 실제 명령 전체와 개별 종료 코드는 사용자 제공 자료에 없음.
+
+[2] Codex의 이전 직접 확인 결과 — 기존 작업 기록
+- 로컬 main 및 HEAD bf19ba0dd960b9c360284c407b1d62a25ceb79e2 확인.
+- 개인키·공개키 파일 존재와 권한 600·644 확인. 키 내용은 읽어 출력하지 않음.
+- origin이 제출 저장소의 HTTPS 주소임을 확인.
+- 당시 Codex 프로세스에 SSH_AUTH_SOCK이 설정되지 않았음.
+- 다음 SSH 443 ls-remote는 전용 키·BatchMode=yes로 직접 시도했으나 인증 실패.
+- 실패 후 중단했으므로 당시 Codex는 Push dry-run을 실행하지 않았음.
+
+다음은 기존 비공개 직접 실행 로그의 파생본입니다.
+개인 홈 절대경로만 [HOME]으로 마스킹했으며 출력·종료 코드는 그대로 유지했습니다.
+[HOME]은 마스킹 표기이므로 그대로 실행하는 명령이 아닙니다.
+===== Codex 직접 실행 기록 시작 =====
+GitHub SSH 443 verification
+2026-11-07T11:33:40.659239+09:00
+
+$ GIT_SSH_COMMAND='ssh -i [HOME]/.ssh/id_ed25519_codyssey -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -p 443' git ls-remote ssh://git@ssh.github.com:443/inyoung7-lab/ia-codyssey-allinone-test1-1.git refs/heads/main
+git@ssh.github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+[exit=128]
+
+===== Codex 직접 실행 기록 끝 =====
+
+[3] 결과 해석과 제한
+사용자 터미널의 성공 결과와 Codex 프로세스의 실패 결과는 실행 환경이 다릅니다.
+SSH 에이전트는 SSH_AUTH_SOCK 등 세션 환경에 따라 접근 여부가 달라질 수 있습니다.
+당시 실패 원인을 에이전트 또는 암호문 하나로 확정하지 않습니다.
+22번 실패 후 443번 대체 연결 성공은 사용자 보고이며 Codex가 재현했다고 주장하지 않습니다.
+원격 조회는 저장소 읽기 접근, dry-run은 SSH Push 사전 점검입니다.
+Everything up-to-date는 새 커밋을 전송했다는 의미가 아니며 향후 서버 정책·보호 규칙에 따른 실제 Push 결과까지 보장하지 않습니다.
+보너스 1~4 변경분과 이 문서는 아직 커밋·GitHub 반영하지 않았습니다.
+
+[4] 보안
+개인키·암호문·토큰·공개키 전체·개인 홈 경로·불필요한 호스트명은 포함하지 않습니다.
+공개 GitHub 계정명과 제출 저장소 주소는 공개 가능한 제출 정보입니다.
+키는 저장소 밖 ~/.ssh/id_ed25519_codyssey 및 .pub에 보관합니다.
+원본 개인키 파일은 복사하거나 제출하지 않습니다.
+향후 실제 SSH Push를 별도로 승인받아 수행한 뒤 명령·실제 출력·종료 코드·원격 커밋 확인을 추가할 수 있습니다.

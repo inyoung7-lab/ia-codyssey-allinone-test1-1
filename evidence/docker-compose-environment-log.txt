@@ -1,0 +1,505 @@
+Docker Compose 보너스 4 실제 실행 기록
+시각: 2026-11-07T11:08:47.683660+09:00
+작업 위치: 저장소 루트(개인 경로 생략)
+
+$ docker ps -aq --no-trunc
+1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87
+1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792
+fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226
+7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602
+ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db
+2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21
+4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e
+b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374
+
+[exit=0]
+
+$ docker inspect 1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87" "2026-11-07T01:54:44.721824754Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {}
+
+[exit=0]
+
+$ docker inspect 1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792" "2026-11-07T01:41:12.474640847Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8090"}]}
+
+[exit=0]
+
+$ docker inspect fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226" "2026-11-07T00:57:34.507443015Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602" "2026-11-05T12:03:24.429498468Z" "sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8081"}]}
+
+[exit=0]
+
+$ docker inspect ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db" "2026-11-05T11:27:14.484505034Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21" "2026-11-05T06:26:29.882451472Z" "sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69" "running" {"80/tcp":[{"HostIp":"","HostPort":"8080"}]}
+
+[exit=0]
+
+$ docker inspect 4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e" "2026-11-05T06:10:52.18097402Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374" "2026-11-05T06:01:50.164379294Z" "sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef" "exited" {}
+
+[exit=0]
+
+$ docker network ls --no-trunc --format '{{.ID}} {{.Name}} {{.Driver}}'
+05b0f9573aade1c5b49587024d164e8b515423b274271435eeaa92f0a0859735 bridge bridge
+ea6c6480a49f1fe9b810adb05502334a56542882788897bafa43a048cb60c684 codyssey-m11-bonus1_default bridge
+96b043e38722ecac3ff0ed6233494330a5f747c17eacc30a16488b6e68c0759e host host
+789e4af894aa9fc024dc85b21c67665ed09e5f0377187843af14bfcf6a0f73a9 none null
+
+[exit=0]
+
+$ docker image ls --no-trunc --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+codyssey-m11-compose-web:bonus1 sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820
+codyssey-web:v1 sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69
+codyssey-web:manual-check sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044
+ubuntu:24.04 sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+hello-world:latest sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+
+[exit=0]
+
+$ docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Name}}'
+
+[exit=0]
+
+$ docker ps -a --filter 'name=^/codyssey-m11-bonus4-env-web-1$' --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker ps --format '{{.Names}} {{.Ports}}'
+codyssey-m11-bonus1-probe-1 80/tcp
+codyssey-m11-bonus1-web-1 127.0.0.1:8090->80/tcp
+codyssey-web-manual-check 127.0.0.1:8081->80/tcp
+codyssey-web-server 0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+
+[exit=0]
+
+$ ss -ltn 'sport = :8091 or sport = :8092'
+State Recv-Q Send-Q Local Address:Port Peer Address:Port
+
+[exit=0]
+
+[verification] WSL 8091·8092 bind 가능 및 기존 Docker 매핑 없음. Windows 전체 포트 점유는 별도 확인하지 않음.
+
+$ docker inspect codyssey-m11-bonus1-web-1 --format '{{.Image}}'
+sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820
+
+[exit=0]
+
+$ docker compose -f docker-compose.yml exec -T web sh -c 'test -x /docker-entrypoint.d/20-envsubst-on-templates.sh && command -v envsubst && cat /docker-entrypoint.sh /docker-entrypoint.d/20-envsubst-on-templates.sh'
+/usr/bin/envsubst
+#!/bin/sh
+# vim:sw=4:ts=4:et
+
+set -e
+
+entrypoint_log() {
+    if [ -z "${NGINX_ENTRYPOINT_QUIET_LOGS:-}" ]; then
+        echo "$@"
+    fi
+}
+
+if [ "$1" = "nginx" ] || [ "$1" = "nginx-debug" ]; then
+    if /usr/bin/find "/docker-entrypoint.d/" -mindepth 1 -maxdepth 1 -type f -print -quit 2>/dev/null | read v; then
+        entrypoint_log "$0: /docker-entrypoint.d/ is not empty, will attempt to perform configuration"
+
+        entrypoint_log "$0: Looking for shell scripts in /docker-entrypoint.d/"
+        find "/docker-entrypoint.d/" -follow -type f -print | sort -V | while read -r f; do
+            case "$f" in
+                *.envsh)
+                    if [ -x "$f" ]; then
+                        entrypoint_log "$0: Sourcing $f";
+                        . "$f"
+                    else
+                        # warn on shell scripts without exec bit
+                        entrypoint_log "$0: Ignoring $f, not executable";
+                    fi
+                    ;;
+                *.sh)
+                    if [ -x "$f" ]; then
+                        entrypoint_log "$0: Launching $f";
+                        "$f"
+                    else
+                        # warn on shell scripts without exec bit
+                        entrypoint_log "$0: Ignoring $f, not executable";
+                    fi
+                    ;;
+                *) entrypoint_log "$0: Ignoring $f";;
+            esac
+        done
+
+        entrypoint_log "$0: Configuration complete; ready for start up"
+    else
+        entrypoint_log "$0: No files found in /docker-entrypoint.d/, skipping configuration"
+    fi
+fi
+
+exec "$@"
+#!/bin/sh
+
+set -e
+
+ME=$(basename "$0")
+
+entrypoint_log() {
+    if [ -z "${NGINX_ENTRYPOINT_QUIET_LOGS:-}" ]; then
+        echo "$@"
+    fi
+}
+
+add_stream_block() {
+  local conffile="/etc/nginx/nginx.conf"
+
+  if grep -q -E "\s*stream\s*\{" "$conffile"; then
+    entrypoint_log "$ME: $conffile contains a stream block; include $stream_output_dir/*.conf to enable stream templates"
+  else
+    # check if the file can be modified, e.g. not on a r/o filesystem
+    touch "$conffile" 2>/dev/null || { entrypoint_log "$ME: info: can not modify $conffile (read-only file system?)"; exit 0; }
+    entrypoint_log "$ME: Appending stream block to $conffile to include $stream_output_dir/*.conf"
+    cat << END >> "$conffile"
+# added by "$ME" on "$(date)"
+stream {
+  include $stream_output_dir/*.conf;
+}
+END
+  fi
+}
+
+auto_envsubst() {
+  local template_dir="${NGINX_ENVSUBST_TEMPLATE_DIR:-/etc/nginx/templates}"
+  local suffix="${NGINX_ENVSUBST_TEMPLATE_SUFFIX:-.template}"
+  local output_dir="${NGINX_ENVSUBST_OUTPUT_DIR:-/etc/nginx/conf.d}"
+  local stream_suffix="${NGINX_ENVSUBST_STREAM_TEMPLATE_SUFFIX:-.stream-template}"
+  local stream_output_dir="${NGINX_ENVSUBST_STREAM_OUTPUT_DIR:-/etc/nginx/stream-conf.d}"
+  local filter="${NGINX_ENVSUBST_FILTER:-}"
+
+  local template defined_envs relative_path output_path subdir
+  defined_envs=$(printf '${%s} ' $(awk -v filter="$filter" 'END { for (name in ENVIRON) { print ( name ~ filter ) ? name : "" } }' < /dev/null))
+  [ -d "$template_dir" ] || return 0
+  if [ ! -w "$output_dir" ]; then
+    entrypoint_log "$ME: ERROR: $template_dir exists, but $output_dir is not writable"
+    return 0
+  fi
+  find "$template_dir" -follow -type f -name "*$suffix" -print | while read -r template; do
+    relative_path="${template#"$template_dir/"}"
+    output_path="$output_dir/${relative_path%"$suffix"}"
+    subdir=$(dirname "$relative_path")
+    # create a subdirectory where the template file exists
+    mkdir -p "$output_dir/$subdir"
+    entrypoint_log "$ME: Running envsubst on $template to $output_path"
+    envsubst "$defined_envs" < "$template" > "$output_path"
+  done
+
+  # Print the first file with the stream suffix, this will be false if there are none
+  if test -n "$(find "$template_dir" -name "*$stream_suffix" -print -quit)"; then
+    mkdir -p "$stream_output_dir"
+    if [ ! -w "$stream_output_dir" ]; then
+      entrypoint_log "$ME: ERROR: $template_dir exists, but $stream_output_dir is not writable"
+      return 0
+    fi
+    add_stream_block
+    find "$template_dir" -follow -type f -name "*$stream_suffix" -print | while read -r template; do
+      relative_path="${template#"$template_dir/"}"
+      output_path="$stream_output_dir/${relative_path%"$stream_suffix"}"
+      subdir=$(dirname "$relative_path")
+      # create a subdirectory where the template file exists
+      mkdir -p "$stream_output_dir/$subdir"
+      entrypoint_log "$ME: Running envsubst on $template to $output_path"
+      envsubst "$defined_envs" < "$template" > "$output_path"
+    done
+  fi
+}
+
+auto_envsubst
+
+exit 0
+
+[exit=0]
+
+$ git check-ignore --no-index -v bonus4-env/.env
+.gitignore:16:.env	bonus4-env/.env
+
+[exit=0]
+
+$ git check-ignore --no-index -v bonus4-env/.env.example
+.gitignore:18:!.env.example	bonus4-env/.env.example
+
+[exit=0]
+
+$ git ls-files -- bonus4-env/.env
+
+[exit=0]
+
+$ docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml config --quiet
+
+[exit=0]
+
+$ docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml up --no-build --pull never --wait --wait-timeout 60
+ Network codyssey-m11-bonus4-env_default Creating
+ Network codyssey-m11-bonus4-env_default Creating
+ Network codyssey-m11-bonus4-env_default Created
+ Network codyssey-m11-bonus4-env_default Created
+ Container codyssey-m11-bonus4-env-web-1 Creating
+ Container codyssey-m11-bonus4-env-web-1 Created
+ Container codyssey-m11-bonus4-env-web-1 Starting
+ Container codyssey-m11-bonus4-env-web-1 Started
+ Container codyssey-m11-bonus4-env-web-1 Waiting
+ Container codyssey-m11-bonus4-env-web-1 Healthy
+
+[exit=0]
+
+$ docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml ps
+NAME                            IMAGE                             COMMAND                  SERVICE   CREATED        STATUS                  PORTS
+codyssey-m11-bonus4-env-web-1   codyssey-m11-compose-web:bonus1   "/docker-entrypoint.…"   web       1 second ago   Up Less than a second   127.0.0.1:8091->8091/tcp
+
+[exit=0]
+
+$ docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web printenv NGINX_PORT
+8091
+
+[exit=0]
+
+$ docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web cat /etc/nginx/conf.d/default.conf
+server {
+    listen 8091;
+    server_name localhost;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+}
+
+[exit=0]
+
+$ docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml port web 8091
+127.0.0.1:8091
+
+[exit=0]
+
+$ docker inspect codyssey-m11-bonus4-env-web-1 --format '{{json .Id}} {{json .HostConfig.PortBindings}}'
+"367d2ed5d6b75ecc09ed8f6ef02f14c3d6e94e4c817d1d392ed1b4fda61d6617" {"8091/tcp":[{"HostIp":"127.0.0.1","HostPort":"8091"}]}
+
+[exit=0]
+
+$ curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8091/
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Date: Sat, 07 Nov 2026 02:08:50 GMT
+Content-Type: text/html
+Content-Length: 323
+Last-Modified: Thu, 05 Nov 2026 06:16:50 GMT
+Connection: keep-alive
+ETag: "6aec1f52-143"
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codyssey Docker Web Server</title>
+</head>
+<body>
+    <h1>Codyssey Docker Web Server</h1>
+    <p>Dockerfile로 만든 첫 번째 웹 서버입니다.</p>
+</body>
+</html>
+
+[exit=0]
+
+[verification] 8091 환경 변수·실제 listen·매핑 및 HTTP 200·원본 HTML 일치.
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml config --quiet
+
+[exit=0]
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml up --no-build --pull never --wait --wait-timeout 60
+ Container codyssey-m11-bonus4-env-web-1 Recreate
+ Container codyssey-m11-bonus4-env-web-1 Recreated
+ Container codyssey-m11-bonus4-env-web-1 Starting
+ Container codyssey-m11-bonus4-env-web-1 Started
+ Container codyssey-m11-bonus4-env-web-1 Waiting
+ Container codyssey-m11-bonus4-env-web-1 Healthy
+
+[exit=0]
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml ps
+NAME                            IMAGE                             COMMAND                  SERVICE   CREATED         STATUS                  PORTS
+codyssey-m11-bonus4-env-web-1   codyssey-m11-compose-web:bonus1   "/docker-entrypoint.…"   web       2 seconds ago   Up Less than a second   127.0.0.1:8092->8092/tcp
+
+[exit=0]
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web printenv NGINX_PORT
+8092
+
+[exit=0]
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml exec -T web cat /etc/nginx/conf.d/default.conf
+server {
+    listen 8092;
+    server_name localhost;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+}
+
+[exit=0]
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml port web 8092
+127.0.0.1:8092
+
+[exit=0]
+
+$ docker inspect codyssey-m11-bonus4-env-web-1 --format '{{json .Id}} {{json .HostConfig.PortBindings}}'
+"1c586c450d5c59da318525fccfeeba82f3f3d9c3fd1602de4c574f3631c3e462" {"8092/tcp":[{"HostIp":"127.0.0.1","HostPort":"8092"}]}
+
+[exit=0]
+
+$ curl --fail-with-body --silent --show-error --max-time 10 --include http://localhost:8092/
+HTTP/1.1 200 OK
+Server: nginx/1.31.8
+Date: Sat, 07 Nov 2026 02:08:52 GMT
+Content-Type: text/html
+Content-Length: 323
+Last-Modified: Thu, 05 Nov 2026 06:16:50 GMT
+Connection: keep-alive
+ETag: "6aec1f52-143"
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codyssey Docker Web Server</title>
+</head>
+<body>
+    <h1>Codyssey Docker Web Server</h1>
+    <p>Dockerfile로 만든 첫 번째 웹 서버입니다.</p>
+</body>
+</html>
+
+[exit=0]
+
+[verification] 8092 환경 변수·실제 listen·매핑 및 HTTP 200·원본 HTML 일치.
+
+$ docker ps --format '{{.Names}} {{.Ports}}'
+codyssey-m11-bonus4-env-web-1 127.0.0.1:8092->8092/tcp
+codyssey-m11-bonus1-probe-1 80/tcp
+codyssey-m11-bonus1-web-1 127.0.0.1:8090->80/tcp
+codyssey-web-manual-check 127.0.0.1:8081->80/tcp
+codyssey-web-server 0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+
+[exit=0]
+
+[verification] 8092 단계 컨테이너 ID 변경 확인 및 이전 8091 Docker 포트 매핑 없음.
+
+$ NGINX_PORT=8092 docker compose --env-file bonus4-env/.env -f docker-compose.bonus4.yml down
+ Container codyssey-m11-bonus4-env-web-1 Stopping
+ Container codyssey-m11-bonus4-env-web-1 Stopped
+ Container codyssey-m11-bonus4-env-web-1 Removing
+ Container codyssey-m11-bonus4-env-web-1 Removed
+ Network codyssey-m11-bonus4-env_default Removing
+ Network codyssey-m11-bonus4-env_default Removed
+
+[exit=0]
+
+$ docker ps -a --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Names}}'
+
+[exit=0]
+
+$ docker network ls --filter label=com.docker.compose.project=codyssey-m11-bonus4-env --format '{{.ID}} {{.Name}}'
+
+[exit=0]
+
+$ docker ps -aq --no-trunc
+1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87
+1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792
+fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226
+7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602
+ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db
+2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21
+4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e
+b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374
+
+[exit=0]
+
+$ docker inspect 1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1ed774ea3e23a406b340d4716b0152ad69b12f88c3a5277819cbe023cea4de87" "2026-11-07T01:54:44.721824754Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {}
+
+[exit=0]
+
+$ docker inspect 1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"1b1112459c2da06053faa0b2870de69478e6a504812325beaca1eb66720cd792" "2026-11-07T01:41:12.474640847Z" "sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8090"}]}
+
+[exit=0]
+
+$ docker inspect fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"fab149394a3e09a6a62ef8010c2e20a3de9e3b7192092105fc7f1672fc421226" "2026-11-07T00:57:34.507443015Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"7c2f65dedbc9d49fde889e0e5c43678a393521d87aa05a80c85f99089c426602" "2026-11-05T12:03:24.429498468Z" "sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044" "running" {"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8081"}]}
+
+[exit=0]
+
+$ docker inspect ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"ea961ec3fb1f8b434920a6f7895cac9cce81d8058e25c6be6610b96ba1ee16db" "2026-11-05T11:27:14.484505034Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect 2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"2c18c320e521e506dcbefb96403db252e5d09f868355960820d54225ead1fa21" "2026-11-05T06:26:29.882451472Z" "sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69" "running" {"80/tcp":[{"HostIp":"","HostPort":"8080"}]}
+
+[exit=0]
+
+$ docker inspect 4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"4441413bd4c1b3a93d27389a756550dbb148d0c188315785c9325ebebc88584e" "2026-11-05T06:10:52.18097402Z" "sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852" "exited" {}
+
+[exit=0]
+
+$ docker inspect b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374 --format '{{json .Id}} {{json .State.StartedAt}} {{json .Image}} {{json .State.Status}} {{json .HostConfig.PortBindings}}'
+"b9a9d8a37449ec4f92971517b9a8792c9de6e2065de6f279b3f2323e64cd6374" "2026-11-05T06:01:50.164379294Z" "sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef" "exited" {}
+
+[exit=0]
+
+$ docker network ls --no-trunc --format '{{.ID}} {{.Name}} {{.Driver}}'
+05b0f9573aade1c5b49587024d164e8b515423b274271435eeaa92f0a0859735 bridge bridge
+ea6c6480a49f1fe9b810adb05502334a56542882788897bafa43a048cb60c684 codyssey-m11-bonus1_default bridge
+96b043e38722ecac3ff0ed6233494330a5f747c17eacc30a16488b6e68c0759e host host
+789e4af894aa9fc024dc85b21c67665ed09e5f0377187843af14bfcf6a0f73a9 none null
+
+[exit=0]
+
+$ docker image ls --no-trunc --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+codyssey-m11-compose-web:bonus1 sha256:9c4c5dad023ffadcf35854532465aa5d642afe288166ee1e952db3225beb3820
+codyssey-web:manual-check sha256:10f62a9cf91e2d0a57bc2feaffca0862bbc718630d0ddf7c86123d3ef1a4e044
+codyssey-web:v1 sha256:e4a61dcbe5608ca2ed5f7127042e8cf47e2d93813306a8a715bba57b92f4fb69
+ubuntu:24.04 sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+hello-world:latest sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+
+[exit=0]
+
+[verification] 보너스 4 임시 컨테이너·네트워크 제거. 기존 모든 컨테이너 ID·시작 시각·이미지·상태·포트 및 네트워크·이미지 목록 동일.
+최종 판정: 실행·포트 변경·정리·보존 검증 성공

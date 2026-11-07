@@ -1,0 +1,6 @@
+services:
+  probe:
+    # 기존 이미지의 wget을 HTTP 점검에 재사용합니다.
+    image: codyssey-m11-compose-web:bonus1
+    entrypoint: ["/bin/sh"]
+    command: ["-c", "while :; do sleep 3600; done"]
